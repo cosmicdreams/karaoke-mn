@@ -9,7 +9,7 @@ This checklist captures the work required to deliver the features outlined in **
 - [x] Acquire a YouTube API key for search.
 
 ## Core Functionality
-- [ ] Implement passkey-based authentication for the KJ account.
+- [x] Implement passkey-based authentication for the KJ account.
 - [x] Create a session creation flow with room code and QR code display.
 - [x] Allow guests to join anonymously and bind their singer names to their devices.
 - [x] Provide a YouTube search interface with the term "karaoke" automatically appended.
