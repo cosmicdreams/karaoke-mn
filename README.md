@@ -8,6 +8,14 @@ This repository contains the early implementation of the Karaoke MN project.
 2. Run `npm install` to install dependencies.
 3. Copy `.env.example` to `.env` and fill in required values.
 
+### Firebase & Firestore Setup
+
+1. Create a Firebase project and generate a service account JSON file.
+2. Set `GOOGLE_APPLICATION_CREDENTIALS` to the path of this file.
+3. Set `FIREBASE_PROJECT_ID` to your project ID.
+4. (Optional) If you prefer to use the Firestore emulator, set
+   `FIRESTORE_EMULATOR_HOST` instead of providing credentials.
+
 ## YouTube Search Script
 
 A small Node.js script is provided to search YouTube for karaoke videos.
