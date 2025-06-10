@@ -6,10 +6,44 @@ const { v4: uuidv4, validate: uuidValidate } = require('uuid');
 const QRCode = require('qrcode');
 const { parseVideoId } = require('./parseVideoId');
 const { getFairQueue } = require('./fairPlay');
+const {
+  generateRegistration,
+  verifyRegistration,
+  generateAuth,
+  verifyAuth,
+} = require('./kjAuth');
 
 const app = express();
 app.use(bodyParser.json());
 app.use(express.static('public'));
+
+app.get('/auth/register/options', (req, res) => {
+  const opts = generateRegistration();
+  res.json(opts);
+});
+
+app.post('/auth/register/verify', async (req, res) => {
+  try {
+    const verified = await verifyRegistration(req.body);
+    res.json({ verified });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+app.get('/auth/login/options', (req, res) => {
+  const opts = generateAuth();
+  res.json(opts);
+});
+
+app.post('/auth/login/verify', async (req, res) => {
+  try {
+    const verified = await verifyAuth(req.body);
+    res.json({ verified });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
 
 const apiKey = process.env.YOUTUBE_API_KEY;
 if (!apiKey) {
