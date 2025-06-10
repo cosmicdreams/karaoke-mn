@@ -8,7 +8,6 @@ This repository contains the early implementation of the Karaoke MN project.
 2. Run `npm install` to install dependencies.
 3. Copy `.env.example` to `.env` and fill in required values.
 
-
 ## YouTube Search Script
 
 A small Node.js script is provided to search YouTube for karaoke videos.
@@ -31,6 +30,24 @@ It appends the term `karaoke` to any search query and returns the top five resul
 
 ### Output
 The script prints each video ID and title to standard output.
+
+## Queue & Search Server
+
+`server.js` exposes a small Express server with endpoints to search YouTube and
+manage a simple in-memory song queue. If `GOOGLE_APPLICATION_CREDENTIALS` is set
+to a Firebase service account file, queued songs will also be stored in
+Firestore.
+
+Start the server with:
+```bash
+node server.js
+```
+
+Endpoints:
+- `GET /search?q=term` – returns the top five karaoke results.
+- `POST /songs` with `videoId` or `url` and `singer` – adds a song to the queue
+  (max three per singer).
+- `GET /queue` – lists the current queue.
 
 ## Tasks
 See `Tasks.md` for the full implementation checklist.
