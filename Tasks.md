@@ -13,7 +13,7 @@ This checklist captures the work required to deliver the features outlined in **
 - [x] Create a session creation flow with room code and QR code display.
 - [x] Allow guests to join anonymously and bind their singer names to their devices.
 - [x] Provide a YouTube search interface with the term "karaoke" automatically appended.
-- [ ] Accept direct YouTube links with video previews.
+- [x] Accept direct YouTube links with video previews.
 - [x] Add songs to a shared queue, limiting each guest to three pending songs.
 - [ ] Display the video player and next singers on the main screen.
 - [ ] Implement the "Fair Play" queue algorithm with Phase 1 and Phase 2 behavior.

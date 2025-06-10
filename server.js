@@ -19,6 +19,29 @@ let queue = [];
 let sessions = {};
 let singers = {};
 
+function parseVideoId(input) {
+  if (!input) return null;
+  if (/^[\w-]{11}$/.test(input)) return input;
+  const vParam = input.match(/[?&]v=([\w-]{11})/);
+  if (vParam) return vParam[1];
+  const short = input.match(/youtu\.be\/([\w-]{11})/);
+  if (short) return short[1];
+  const embed = input.match(/embed\/([\w-]{11})/);
+  if (embed) return embed[1];
+  return null;
+}
+
+async function getVideoInfo(videoId) {
+  const resp = await youtube.videos.list({ part: 'snippet', id: videoId });
+  if (!resp.data.items.length) throw new Error('Video not found');
+  const snippet = resp.data.items[0].snippet;
+  return {
+    videoId,
+    title: snippet.title,
+    thumbnail: snippet.thumbnails.default.url
+  };
+}
+
 function generateRoomCode() {
   const words1 = ['PURPLE', 'GOLD', 'SILVER', 'CRIMSON', 'JADE'];
   const words2 = ['RAIN', 'SUN', 'MOON', 'STAR', 'SONG'];
@@ -115,9 +138,21 @@ app.get('/search', async (req, res) => {
   }
 });
 
+app.get('/preview', async (req, res) => {
+  const { url, videoId } = req.query;
+  const id = parseVideoId(videoId || url);
+  if (!id) return res.status(400).json({ error: 'Invalid or missing video ID' });
+  try {
+    const info = await getVideoInfo(id);
+    res.json(info);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.post('/songs', async (req, res) => {
   const { url, videoId, singer } = req.body;
-  const id = videoId || (url && url.match(/v=([\w-]+)/)?.[1]);
+  const id = parseVideoId(videoId || url);
   if (!id || !singer) return res.status(400).json({ error: 'Missing videoId or singer' });
   try {
     const song = addSong(id, singer);
