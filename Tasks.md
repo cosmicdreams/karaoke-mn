@@ -22,7 +22,7 @@ This checklist captures the work required to deliver the features outlined in **
 ## Technical Tasks
 - [ ] Persist singer device IDs in localStorage keyed by session ID.
 - [x] Record playback failures in Firestore via an `error` field.
-- [ ] Implement the `startSession` Cloud Function to pull prepared content from Drupal.
+- [x] Implement the `startSession` Cloud Function to pull prepared content from Drupal.
 - [ ] Document API contracts and data models in the BRD.
 
 ## Future Enhancements

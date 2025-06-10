@@ -15,6 +15,7 @@ This repository contains the early implementation of the Karaoke MN project.
 3. Set `FIREBASE_PROJECT_ID` to your project ID.
 4. (Optional) If you prefer to use the Firestore emulator, set
    `FIRESTORE_EMULATOR_HOST` instead of providing credentials.
+5. Set `DRUPAL_CONTENT_URL` to your Drupal JSON:API endpoint for prepared content.
 
 ## YouTube Search Script
 
@@ -69,6 +70,17 @@ Endpoints:
 - `GET /preview?url=` or `?videoId=` – fetches metadata for a YouTube link so
   the client can display a preview before adding it to the queue.
 - `GET /queue` – lists the current queue.
+
+## Cloud Functions
+
+The `startSession` Cloud Function creates a new Firestore session document using
+prepared content fetched from Drupal. Each document includes a `createdAt`
+timestamp. Ensure `DRUPAL_CONTENT_URL` is set in your environment before
+deploying. Deploy with:
+
+```bash
+firebase deploy --only functions:startSession
+```
 
 ## Tasks
 See `Tasks.md` for the full implementation checklist.
