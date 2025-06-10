@@ -110,4 +110,24 @@ Based on the PRD.md, here is a suggested component structure for building the Ka
 *   **`input-field`**:
     *   **Description**: Standardized input fields with consistent styling, validation, and accessibility features.
 
+## Additional Components
+
+*   **`app-theme`**:
+    *   **Description**: Provides global theming and reusable design tokens.
+    *   **Responsibilities**: Applies a Karafun-inspired dark theme and exposes CSS custom properties for other components.
+*   **`layout-container`**:
+    *   **Description**: Handles responsive layout and places main regions of the app (player, queue, search) appropriately.
+    *   **Responsibilities**: Adjusts to different screen sizes so the interface works on mobile devices, tablets, and TVs.
+*   **`toast-notification`**:
+    *   **Description**: Brief pop-up messages for join confirmations, queue updates, or errors.
+    *   **Responsibilities**: Shows non-blocking feedback to the user and automatically dismisses after a few seconds.
+
+## UI Design Notes
+
+* Use a dark background with vibrant accent colors to mimic the Karafun aesthetic.
+* Keep the YouTube player and queue information prominent on the main screen.
+* Favor large, legible fonts and clear controls for a "party" environment.
+* Implement smooth transitions when songs change or when the queue is updated.
+* Ensure every view is responsive so guests can comfortably use phones while the KJ manages from a tablet or laptop.
+
 This structure aims to create modular, reusable, and maintainable components for the Karaoke MN application. Each component has a clear set of responsibilities, which should simplify development and testing.
