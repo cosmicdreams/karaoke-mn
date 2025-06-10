@@ -7,6 +7,7 @@ This repository contains the early implementation of the Karaoke MN project.
 1. Install [Node.js](https://nodejs.org/) 20.x (see .nvmrc).
 2. Run `npm install` to install dependencies.
 3. Copy `.env.example` to `.env` and fill in required values.
+4. Run `npm run lint` and `npm run format` to keep code style consistent.
 
 ### Frontend Development
 
