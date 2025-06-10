@@ -60,6 +60,8 @@ Endpoints:
 - `GET /search?q=term` – returns the top five karaoke results.
 - `POST /songs` with `videoId` or `url` and `singer` – adds a song to the queue
   (max three per singer).
+- `GET /preview?url=` or `?videoId=` – fetches metadata for a YouTube link so
+  the client can display a preview before adding it to the queue.
 - `GET /queue` – lists the current queue.
 
 ## Tasks
