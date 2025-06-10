@@ -21,7 +21,7 @@
 
       async function fetchQueue() {
         const res = await fetch('/queue');
-        return res.ok ? res.json() : [];
+        return res.ok ? res.json() : { queue: [] };
       }
 
       async function reportError(code) {
@@ -38,7 +38,8 @@
       }
 
       async function update() {
-        const queue = await fetchQueue();
+        const data = await fetchQueue();
+        const queue = data.queue;
         if (!queue.length) return;
         currentSongId = queue[0].id;
         if (!player) {

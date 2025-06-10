@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>KJ Panel</title>
+  <style>
+    body { font-family: sans-serif; }
+    li { margin: 4px 0; }
+    button { margin-left: 4px; }
+  </style>
+</head>
+<body>
+<h1>KJ Control Panel</h1>
+<button id="pauseBtn">Pause</button>
+<ol id="queue"></ol>
+<script>
+async function fetchQueue() {
+  const res = await fetch('/queue');
+  return res.ok ? res.json() : { queue: [], paused: false };
+}
+
+async function update() {
+  const data = await fetchQueue();
+  document.getElementById('pauseBtn').textContent = data.paused ? 'Resume' : 'Pause';
+  const list = document.getElementById('queue');
+  list.innerHTML = '';
+  data.queue.forEach((song, idx) => {
+    const li = document.createElement('li');
+    li.textContent = song.singer + ': ' + song.videoId;
+    const up = document.createElement('button');
+    up.textContent = '↑';
+    up.onclick = () => move(song.id, idx - 1);
+    const down = document.createElement('button');
+    down.textContent = '↓';
+    down.onclick = () => move(song.id, idx + 1);
+    const remove = document.createElement('button');
+    remove.textContent = 'Remove';
+    remove.onclick = () => action(`/songs/${song.id}`, 'DELETE');
+    const replace = document.createElement('button');
+    replace.textContent = 'Replace';
+    replace.onclick = () => replaceSong(song.id);
+    const skip = document.createElement('button');
+    skip.textContent = 'Skip';
+    skip.onclick = () => action(`/songs/${song.id}/skip`, 'POST');
+    li.appendChild(up);
+    li.appendChild(down);
+    li.appendChild(remove);
+    li.appendChild(replace);
+    li.appendChild(skip);
+    list.appendChild(li);
+  });
+}
+
+async function action(url, method, body) {
+  await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: body && JSON.stringify(body) });
+  update();
+}
+
+async function move(id, newIndex) {
+  const data = await fetchQueue();
+  const order = data.queue.map(s => s.id);
+  const idx = order.indexOf(id);
+  if (idx === -1 || newIndex < 0 || newIndex >= order.length) return;
+  order.splice(idx,1);
+  order.splice(newIndex,0,id);
+  await action('/songs/reorder', 'POST', { order });
+}
+
+async function replaceSong(id) {
+  const url = prompt('New YouTube URL or ID:');
+  if (!url) return;
+  await action(`/songs/${id}`, 'PUT', { url });
+}
+
+document.getElementById('pauseBtn').onclick = async () => {
+  const paused = document.getElementById('pauseBtn').textContent === 'Pause';
+  await action('/sessions/pause', 'POST', { paused });
+};
+
+update();
+setInterval(update, 5000);
+</script>
+</body>
+</html>

@@ -23,6 +23,7 @@ let sessions = {};
 let singers = {};
 let singerStats = {};
 let phase2Start = null;
+let paused = false;
 
 async function getVideoInfo(videoId) {
   const resp = await youtube.videos.list({ part: 'snippet', id: videoId });
@@ -130,6 +131,60 @@ function completeSong(id) {
   return song;
 }
 
+function removeSong(id) {
+  const idx = queue.findIndex(s => s.id === id);
+  if (idx === -1) throw new Error('Song not found');
+  const [song] = queue.splice(idx, 1);
+  if (db) {
+    db.collection('songs')
+      .doc(id)
+      .delete()
+      .catch(e => console.error('Firestore delete error:', e));
+  }
+  return song;
+}
+
+function replaceSong(id, videoId) {
+  const song = queue.find(s => s.id === id);
+  if (!song) throw new Error('Song not found');
+  song.videoId = videoId;
+  if (db) {
+    db.collection('songs')
+      .doc(id)
+      .update({ videoId })
+      .catch(e => console.error('Firestore update error:', e));
+  }
+  return song;
+}
+
+function reorderSongs(order) {
+  if (!Array.isArray(order)) throw new Error('order must be an array');
+  const map = {};
+  queue.forEach(s => { map[s.id] = s; });
+  const newQueue = [];
+  order.forEach(id => {
+    if (map[id]) {
+      newQueue.push(map[id]);
+      delete map[id];
+    }
+  });
+  const remaining = queue.filter(s => map[s.id]);
+  queue = newQueue.concat(remaining);
+}
+
+function skipSong(id) {
+  const idx = queue.findIndex(s => s.id === id);
+  if (idx === -1) throw new Error('Song not found');
+  const [song] = queue.splice(idx, 1);
+  if (db) {
+    db.collection('songs')
+      .doc(id)
+      .update({ skipped: true })
+      .catch(e => console.error('Firestore update error:', e));
+  }
+  return song;
+}
+
 app.get('/search', async (req, res) => {
   const q = req.query.q;
   if (!q) return res.status(400).json({ error: 'Missing q' });
@@ -198,6 +253,53 @@ app.post('/songs/:id/complete', (req, res) => {
   }
 });
 
+app.delete('/songs/:id', (req, res) => {
+  const { id } = req.params;
+  try {
+    removeSong(id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(404).json({ error: err.message });
+  }
+});
+
+app.put('/songs/:id', (req, res) => {
+  const { id } = req.params;
+  const vid = parseVideoId(req.body.videoId || req.body.url);
+  if (!vid) return res.status(400).json({ error: 'Invalid or missing videoId' });
+  try {
+    replaceSong(id, vid);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(404).json({ error: err.message });
+  }
+});
+
+app.post('/songs/reorder', (req, res) => {
+  const { order } = req.body;
+  try {
+    reorderSongs(order);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+app.post('/songs/:id/skip', (req, res) => {
+  const { id } = req.params;
+  try {
+    skipSong(id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(404).json({ error: err.message });
+  }
+});
+
+app.post('/sessions/pause', (req, res) => {
+  paused = !!req.body.paused;
+  res.json({ paused });
+});
+
 app.post('/phase2', (req, res) => {
   const { startTime } = req.body;
   phase2Start = startTime ? new Date(startTime).getTime() : Date.now();
@@ -214,7 +316,7 @@ function inPhase2() {
 
 app.get('/queue', (req, res) => {
   const ordered = getFairQueue(queue, singerStats, inPhase2());
-  res.json(ordered);
+  res.json({ paused, queue: ordered });
 });
 
 const port = process.env.PORT || 3000;
