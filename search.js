@@ -1,3 +1,4 @@
+require('dotenv').config();
 const {google} = require('googleapis');
 const query = process.argv.slice(2).join(' ');
 
