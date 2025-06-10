@@ -20,7 +20,7 @@ This checklist captures the work required to deliver the features outlined in **
 - [ ] Build a KJ control panel for reordering, removing, replacing, skipping, and pausing songs.
 
 ## Technical Tasks
-- [ ] Persist singer device IDs in localStorage keyed by session ID.
+- [x] Persist singer device IDs in localStorage keyed by session ID.
 - [x] Record playback failures in Firestore via an `error` field.
 - [x] Implement the `startSession` Cloud Function to pull prepared content from Drupal.
 - [ ] Document API contracts and data models in the BRD.
