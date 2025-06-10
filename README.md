@@ -53,6 +53,10 @@ node server.js
 
 Endpoints:
 - `POST /sessions` – creates a new session and returns a room code and QR code.
+- `POST /sessions/:code/join` with `name` and optional `deviceId` – joins a
+  session. The `deviceId` must be a UUID and should be reused for the duration
+  of the session; if a different name is sent for an existing `deviceId`, the
+  server will reject the request.
 - `GET /search?q=term` – returns the top five karaoke results.
 - `POST /songs` with `videoId` or `url` and `singer` – adds a song to the queue
   (max three per singer).

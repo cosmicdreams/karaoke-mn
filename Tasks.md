@@ -11,7 +11,7 @@ This checklist captures the work required to deliver the features outlined in **
 ## Core Functionality
 - [ ] Implement passkey-based authentication for the KJ account.
 - [x] Create a session creation flow with room code and QR code display.
-- [ ] Allow guests to join anonymously and bind their singer names to their devices.
+- [x] Allow guests to join anonymously and bind their singer names to their devices.
 - [x] Provide a YouTube search interface with the term "karaoke" automatically appended.
 - [ ] Accept direct YouTube links with video previews.
 - [x] Add songs to a shared queue, limiting each guest to three pending songs.
