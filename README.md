@@ -29,12 +29,15 @@ It appends the term `karaoke` to any search query and returns the top five resul
    ```
 2. Set your YouTube API key in the environment:
    ```bash
-   export YOUTUBE_API_KEY=YOUR_KEY
-   ```
+  export YOUTUBE_API_KEY=YOUR_KEY
+  ```
 3. Run a search:
-   ```bash
-   npm run search -- "purple rain"
-   ```
+  ```bash
+  npm run search -- "purple rain"
+  ```
+
+### Acquiring a YouTube API Key
+To obtain a key, create a project in the [Google Developer Console](https://console.developers.google.com/), enable the YouTube Data API v3, and generate an API key under **APIs & Services \> Credentials**. Paste this key into your `.env` file or export it as `YOUTUBE_API_KEY` before running any of the scripts or the server.
 
 ### Output
 The script prints each video ID and title to standard output.

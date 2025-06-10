@@ -6,7 +6,7 @@ This checklist captures the work required to deliver the features outlined in **
 - [x] Initialize the repository and development environment.
 - [x] Configure Firebase and create a Firestore instance.
 - [ ] Set up Headless Drupal for curated content.
-- [ ] Acquire a YouTube API key for search.
+- [x] Acquire a YouTube API key for search.
 
 ## Core Functionality
 - [ ] Implement passkey-based authentication for the KJ account.
@@ -21,7 +21,7 @@ This checklist captures the work required to deliver the features outlined in **
 
 ## Technical Tasks
 - [ ] Persist singer device IDs in localStorage keyed by session ID.
-- [ ] Record playback failures in Firestore via an `error` field.
+- [x] Record playback failures in Firestore via an `error` field.
 - [ ] Implement the `startSession` Cloud Function to pull prepared content from Drupal.
 - [ ] Document API contracts and data models in the BRD.
 
