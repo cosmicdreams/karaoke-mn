@@ -5,6 +5,7 @@ const { getFirestore } = require('./firebase');
 const { v4: uuidv4, validate: uuidValidate } = require('uuid');
 const QRCode = require('qrcode');
 const { parseVideoId } = require('./parseVideoId');
+const { getFairQueue } = require('./fairPlay');
 
 const app = express();
 app.use(bodyParser.json());
@@ -20,6 +21,8 @@ const db = getFirestore();
 let queue = [];
 let sessions = {};
 let singers = {};
+let singerStats = {};
+let phase2Start = null;
 
 async function getVideoInfo(videoId) {
   const resp = await youtube.videos.list({ part: 'snippet', id: videoId });
@@ -62,10 +65,12 @@ function joinSession(code, name, deviceId) {
   if (!singer) {
     singer = { id: uuidv4(), name, deviceId };
     singers[session.id].push(singer);
+    if (!singerStats[singer.name]) singerStats[singer.name] = { songsSung: 0 };
   } else {
     if (singer.name !== name) {
       throw new Error('Device already registered with a different name');
     }
+    if (!singerStats[singer.name]) singerStats[singer.name] = { songsSung: 0 };
   }
   if (db) {
     db.collection('sessions')
@@ -103,9 +108,25 @@ function addSong(videoId, singer) {
   if (count >= 3) {
     throw new Error('Singer has reached song limit');
   }
-  const song = { id: uuidv4(), videoId, singer };
+  if (!singerStats[singer]) singerStats[singer] = { songsSung: 0 };
+  const song = { id: uuidv4(), videoId, singer, addedAt: Date.now() };
   queue.push(song);
   if (db) db.collection('songs').doc(song.id).set(song);
+  return song;
+}
+
+function completeSong(id) {
+  const idx = queue.findIndex(s => s.id === id);
+  if (idx === -1) throw new Error('Song not found');
+  const [song] = queue.splice(idx, 1);
+  if (!singerStats[song.singer]) singerStats[song.singer] = { songsSung: 0 };
+  singerStats[song.singer].songsSung += 1;
+  if (db) {
+    db.collection('songs')
+      .doc(id)
+      .update({ completed: true })
+      .catch(e => console.error('Firestore update error:', e));
+  }
   return song;
 }
 
@@ -167,8 +188,33 @@ app.post('/songs/:id/error', (req, res) => {
   res.json({ success: true });
 });
 
+app.post('/songs/:id/complete', (req, res) => {
+  const { id } = req.params;
+  try {
+    completeSong(id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(404).json({ error: err.message });
+  }
+});
+
+app.post('/phase2', (req, res) => {
+  const { startTime } = req.body;
+  phase2Start = startTime ? new Date(startTime).getTime() : Date.now();
+  res.json({ phase2Start });
+});
+
+function inPhase2() {
+  const allSung = Object.keys(singerStats).length > 0 &&
+    Object.values(singerStats).every(s => s.songsSung > 0);
+  if (allSung) return true;
+  if (phase2Start && Date.now() >= phase2Start) return true;
+  return false;
+}
+
 app.get('/queue', (req, res) => {
-  res.json(queue);
+  const ordered = getFairQueue(queue, singerStats, inPhase2());
+  res.json(ordered);
 });
 
 const port = process.env.PORT || 3000;
