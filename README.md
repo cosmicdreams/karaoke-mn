@@ -51,6 +51,9 @@ Start the server with:
 node server.js
 ```
 
+Visit `http://localhost:3000/` in a browser to see the main screen with the
+current video and a list of upcoming singers.
+
 Endpoints:
 - `POST /sessions` – creates a new session and returns a room code and QR code.
 - `POST /sessions/:code/join` with `name` and optional `deviceId` – joins a

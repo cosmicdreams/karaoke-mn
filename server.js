@@ -7,6 +7,7 @@ const QRCode = require('qrcode');
 
 const app = express();
 app.use(bodyParser.json());
+app.use(express.static('public'));
 
 const apiKey = process.env.YOUTUBE_API_KEY;
 if (!apiKey) {

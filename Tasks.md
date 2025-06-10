@@ -15,7 +15,7 @@ This checklist captures the work required to deliver the features outlined in **
 - [x] Provide a YouTube search interface with the term "karaoke" automatically appended.
 - [x] Accept direct YouTube links with video previews.
 - [x] Add songs to a shared queue, limiting each guest to three pending songs.
-- [ ] Display the video player and next singers on the main screen.
+- [x] Display the video player and next singers on the main screen.
 - [ ] Implement the "Fair Play" queue algorithm with Phase 1 and Phase 2 behavior.
 - [ ] Build a KJ control panel for reordering, removing, replacing, skipping, and pausing songs.
 
