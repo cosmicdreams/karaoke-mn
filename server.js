@@ -4,6 +4,7 @@ const { google } = require('googleapis');
 const { getFirestore } = require('./firebase');
 const { v4: uuidv4, validate: uuidValidate } = require('uuid');
 const QRCode = require('qrcode');
+const { parseVideoId } = require('./parseVideoId');
 
 const app = express();
 app.use(bodyParser.json());
@@ -19,18 +20,6 @@ const db = getFirestore();
 let queue = [];
 let sessions = {};
 let singers = {};
-
-function parseVideoId(input) {
-  if (!input) return null;
-  if (/^[\w-]{11}$/.test(input)) return input;
-  const vParam = input.match(/[?&]v=([\w-]{11})/);
-  if (vParam) return vParam[1];
-  const short = input.match(/youtu\.be\/([\w-]{11})/);
-  if (short) return short[1];
-  const embed = input.match(/embed\/([\w-]{11})/);
-  if (embed) return embed[1];
-  return null;
-}
 
 async function getVideoInfo(videoId) {
   const resp = await youtube.videos.list({ part: 'snippet', id: videoId });

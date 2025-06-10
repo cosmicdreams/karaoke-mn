@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "search": "node search.js"
   },
   "keywords": [],
@@ -18,5 +18,8 @@
     "googleapis": "^150.0.1",
     "qrcode": "^1.5.4",
     "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
   }
 }
