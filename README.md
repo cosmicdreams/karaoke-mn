@@ -1,0 +1,29 @@
+# Karaoke MN
+
+This repository contains the early implementation of the Karaoke MN project.
+
+## YouTube Search Script
+
+A small Node.js script is provided to search YouTube for karaoke videos.
+It appends the term `karaoke` to any search query and returns the top five results.
+
+### Usage
+
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Set your YouTube API key in the environment:
+   ```bash
+   export YOUTUBE_API_KEY=YOUR_KEY
+   ```
+3. Run a search:
+   ```bash
+   npm run search -- "purple rain"
+   ```
+
+### Output
+The script prints each video ID and title to standard output.
+
+## Tasks
+See `Tasks.md` for the full implementation checklist.
