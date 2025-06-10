@@ -2,6 +2,13 @@
 
 This repository contains the early implementation of the Karaoke MN project.
 
+## Development Setup
+
+1. Install [Node.js](https://nodejs.org/) 20.x (see .nvmrc).
+2. Run `npm install` to install dependencies.
+3. Copy `.env.example` to `.env` and fill in required values.
+
+
 ## YouTube Search Script
 
 A small Node.js script is provided to search YouTube for karaoke videos.

@@ -3,7 +3,7 @@
 This checklist captures the work required to deliver the features outlined in **PRD.md** and will help finalize the Business Requirements Document (BRD).
 
 ## Setup
-- [ ] Initialize the repository and development environment.
+- [x] Initialize the repository and development environment.
 - [ ] Configure Firebase and create a Firestore instance.
 - [ ] Set up Headless Drupal for curated content.
 - [ ] Acquire a YouTube API key for search.
