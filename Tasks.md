@@ -1,34 +1,33 @@
-# Tasks
+# Implementation Tasks
 
-The following tasks are derived from the features and implementation details described in **PRD.md**.
+This checklist captures the work required to deliver the features outlined in **PRD.md** and will help finalize the Business Requirements Document (BRD).
 
-## Core Features (MVP)
+## Setup
+- [ ] Initialize the repository and development environment.
+- [ ] Configure Firebase and create a Firestore instance.
+- [ ] Set up Headless Drupal for curated content.
+- [ ] Acquire a YouTube API key for search.
 
-- Implement passkey-based authentication for the KJ account.
-- Allow the KJ to create a new session with a unique room code and QR code.
-- Enable guests to join anonymously and bind their chosen singer name to their device.
-- Provide YouTube search with the "karaoke" term automatically appended.
-- Support direct YouTube link submission.
-- Show a video preview before adding a song to the queue.
-- Add selected songs to a shared queue, limiting each guest to three pending songs.
-- Display the video player and upcoming singer list on the main "TV" screen.
-- Implement a queue logic that interleaves singers fairly ("Fair Play" algorithm) with Phase 1 and Phase 2 behaviour.
-- Build a KJ control panel with options to set a timed first round, reorder the queue, remove singers, replace videos, skip to the next singer, and pause the session.
+## Core Functionality
+- [ ] Implement passkey-based authentication for the KJ account.
+- [ ] Create a session creation flow with room code and QR code display.
+- [ ] Allow guests to join anonymously and bind their singer names to their devices.
+- [ ] Provide a YouTube search interface with the term "karaoke" automatically appended.
+- [ ] Accept direct YouTube links with video previews.
+- [ ] Add songs to a shared queue, limiting each guest to three pending songs.
+- [ ] Display the video player and next singers on the main screen.
+- [ ] Implement the "Fair Play" queue algorithm with Phase 1 and Phase 2 behavior.
+- [ ] Build a KJ control panel for reordering, removing, replacing, skipping, and pausing songs.
 
-## Technical Components
+## Technical Tasks
+- [ ] Persist singer device IDs in localStorage keyed by session ID.
+- [ ] Record playback failures in Firestore via an `error` field.
+- [ ] Implement the `startSession` Cloud Function to pull prepared content from Drupal.
+- [ ] Document API contracts and data models in the BRD.
 
-- Build the frontend as a single-page application (SPA).
-- Use Firebase for real-time session data (Firestore) and Cloud Functions for starting sessions.
-- Fetch prepared content from a headless Drupal backend.
-- Integrate with the YouTube API for live song searches.
-- Persist each singer's device ID in localStorage keyed by session ID.
-- Record playback failures in Firestore using an `error` field in the song object.
-
-## Future Enhancements (V2+)
-
-- Maintain a KJ-curated catalog of "KJ's Pick" videos.
-- Store each guest's personal songbook locally.
-- Provide interstitial videos and bumper music as atmosphere tools.
-- Offer collaborative song features (duets and groups) with invitations and merged queue items.
-- Support themed sessions and on-screen announcements.
-
+## Future Enhancements
+- [ ] Maintain a KJ-curated catalog of "KJ's Pick" videos.
+- [ ] Store each guest's personal songbook locally.
+- [ ] Provide interstitial and bumper video support.
+- [ ] Implement duet and group collaboration features.
+- [ ] Support themed sessions and on-screen announcements.
