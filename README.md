@@ -8,6 +8,22 @@ This repository contains the early implementation of the Karaoke MN project.
 2. Run `npm install` to install dependencies.
 3. Copy `.env.example` to `.env` and fill in required values.
 
+### Frontend Development
+
+The frontend uses [Vite](https://vitejs.dev/) with [Lit](https://lit.dev/) for component development.
+
+Run a development server with hot module reloading:
+
+```bash
+npm run dev
+```
+
+Build the production assets to `public/dist`:
+
+```bash
+npm run build
+```
+
 ### Firebase & Firestore Setup
 
 1. Create a Firebase project and generate a service account JSON file.
