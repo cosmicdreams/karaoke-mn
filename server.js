@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const { google } = require('googleapis');
 const { getFirestore } = require('./firebase');
 const { v4: uuidv4 } = require('uuid');
+const QRCode = require('qrcode');
 
 const app = express();
 app.use(bodyParser.json());
@@ -15,6 +16,34 @@ if (!apiKey) {
 const youtube = google.youtube({ version: 'v3', auth: apiKey });
 const db = getFirestore();
 let queue = [];
+let sessions = {};
+
+function generateRoomCode() {
+  const words1 = ['PURPLE', 'GOLD', 'SILVER', 'CRIMSON', 'JADE'];
+  const words2 = ['RAIN', 'SUN', 'MOON', 'STAR', 'SONG'];
+  const w1 = words1[Math.floor(Math.random() * words1.length)];
+  const w2 = words2[Math.floor(Math.random() * words2.length)];
+  return `${w1}-${w2}`;
+}
+
+function createSession() {
+  const id = uuidv4();
+  const code = generateRoomCode();
+  const session = { id, code };
+  sessions[id] = session;
+  if (db) db.collection('sessions').doc(id).set(session);
+  return session;
+}
+
+app.post('/sessions', async (req, res) => {
+  try {
+    const session = createSession();
+    const qrCode = await QRCode.toDataURL(session.code);
+    res.json({ id: session.id, code: session.code, qrCode });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 function addSong(videoId, singer) {
   const count = queue.filter(q => q.singer === singer).length;

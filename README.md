@@ -52,6 +52,7 @@ node server.js
 ```
 
 Endpoints:
+- `POST /sessions` – creates a new session and returns a room code and QR code.
 - `GET /search?q=term` – returns the top five karaoke results.
 - `POST /songs` with `videoId` or `url` and `singer` – adds a song to the queue
   (max three per singer).
