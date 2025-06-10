@@ -23,7 +23,7 @@ This checklist captures the work required to deliver the features outlined in **
 - [x] Persist singer device IDs in localStorage keyed by session ID.
 - [x] Record playback failures in Firestore via an `error` field.
 - [x] Implement the `startSession` Cloud Function to pull prepared content from Drupal.
-- [ ] Document API contracts and data models in the BRD.
+- [x] Document API contracts and data models in the PRD.
 
 ## Future Enhancements
 - [ ] Maintain a KJ-curated catalog of "KJ's Pick" videos.
