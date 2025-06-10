@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { google } = require('googleapis');
 const { getFirestore } = require('./firebase');
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4, validate: uuidValidate } = require('uuid');
 const QRCode = require('qrcode');
 
 const app = express();
@@ -17,6 +17,7 @@ const youtube = google.youtube({ version: 'v3', auth: apiKey });
 const db = getFirestore();
 let queue = [];
 let sessions = {};
+let singers = {};
 
 function generateRoomCode() {
   const words1 = ['PURPLE', 'GOLD', 'SILVER', 'CRIMSON', 'JADE'];
@@ -35,6 +36,34 @@ function createSession() {
   return session;
 }
 
+function joinSession(code, name, deviceId) {
+  const session = Object.values(sessions).find(s => s.code === code);
+  if (!session) throw new Error('Invalid room code');
+  if (!name) throw new Error('Missing singer name');
+  if (deviceId && !uuidValidate(deviceId)) {
+    throw new Error('Invalid deviceId format');
+  }
+  if (!deviceId) deviceId = uuidv4();
+  singers[session.id] = singers[session.id] || [];
+  let singer = singers[session.id].find(s => s.deviceId === deviceId);
+  if (!singer) {
+    singer = { id: uuidv4(), name, deviceId };
+    singers[session.id].push(singer);
+  } else {
+    if (singer.name !== name) {
+      throw new Error('Device already registered with a different name');
+    }
+  }
+  if (db) {
+    db.collection('sessions')
+      .doc(session.id)
+      .collection('singers')
+      .doc(singer.id)
+      .set({ name: singer.name, deviceId: singer.deviceId });
+  }
+  return { sessionId: session.id, singerId: singer.id, deviceId: singer.deviceId };
+}
+
 app.post('/sessions', async (req, res) => {
   try {
     const session = createSession();
@@ -42,6 +71,17 @@ app.post('/sessions', async (req, res) => {
     res.json({ id: session.id, code: session.code, qrCode });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/sessions/:code/join', (req, res) => {
+  const { code } = req.params;
+  const { name, deviceId } = req.body;
+  try {
+    const result = joinSession(code, name, deviceId);
+    res.json(result);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
   }
 });
 
