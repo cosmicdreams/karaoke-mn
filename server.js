@@ -152,6 +152,21 @@ app.post('/songs', async (req, res) => {
   }
 });
 
+app.post('/songs/:id/error', (req, res) => {
+  const { id } = req.params;
+  const { error } = req.body;
+  const song = queue.find(s => s.id === id);
+  if (!song) return res.status(404).json({ error: 'Song not found' });
+  song.error = error || 'unknown';
+  if (db) {
+    db.collection('songs')
+      .doc(id)
+      .update({ error: song.error })
+      .catch(e => console.error('Firestore update error:', e));
+  }
+  res.json({ success: true });
+});
+
 app.get('/queue', (req, res) => {
   res.json(queue);
 });
