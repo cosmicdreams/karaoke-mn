@@ -16,6 +16,7 @@ describe('getFirestore', () => {
     admin.initializeApp.mockClear();
     admin.firestore.mockClear();
     delete require.cache[require.resolve('../firebase')];
+    delete process.env.FIREBASE_PROJECT_ID;
   });
 
   test('returns null when no credentials or emulator', () => {

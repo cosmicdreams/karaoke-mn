@@ -4,7 +4,7 @@ This checklist breaks down the work required to implement the Karaoke MN front-e
 Each item is independent so multiple Codex sessions can work in parallel.
 
 ## Build & Tooling
-- [ ] Install Lit and configure a modern build system (e.g. Vite) for component development.
+- [x] Install Lit and configure a modern build system (e.g. Vite) for component development.
 - [ ] Set up ESLint/Prettier for consistent styling.
 - [ ] Configure Jest with a browser environment for UI tests.
 
