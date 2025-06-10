@@ -16,8 +16,8 @@ This checklist captures the work required to deliver the features outlined in **
 - [x] Accept direct YouTube links with video previews.
 - [x] Add songs to a shared queue, limiting each guest to three pending songs.
 - [x] Display the video player and next singers on the main screen.
-- [ ] Implement the "Fair Play" queue algorithm with Phase 1 and Phase 2 behavior.
-- [ ] Build a KJ control panel for reordering, removing, replacing, skipping, and pausing songs.
+- [x] Implement the "Fair Play" queue algorithm with Phase 1 and Phase 2 behavior.
+- [x] Build a KJ control panel for reordering, removing, replacing, skipping, and pausing songs.
 
 ## Technical Tasks
 - [x] Persist singer device IDs in localStorage keyed by session ID.
