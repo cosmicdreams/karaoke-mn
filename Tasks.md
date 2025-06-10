@@ -4,7 +4,7 @@ This checklist captures the work required to deliver the features outlined in **
 
 ## Setup
 - [x] Initialize the repository and development environment.
-- [ ] Configure Firebase and create a Firestore instance.
+- [x] Configure Firebase and create a Firestore instance.
 - [ ] Set up Headless Drupal for curated content.
 - [ ] Acquire a YouTube API key for search.
 
