@@ -6,6 +6,7 @@ import './guest-song-search.js';
 import './guest-queue-view.js';
 import './guest-songbook.js';
 import './main-screen-view.js';
+import './settings-profile.js';
 
 class KJView extends LitElement {
   static properties = {
@@ -100,6 +101,7 @@ export class KaraokeApp extends LitElement {
     if (path.startsWith('/kj')) return 'kj';
     if (path.startsWith('/guest')) return 'guest';
     if (path.startsWith('/main')) return 'main';
+    if (path.startsWith('/settings')) return 'settings';
     return 'guest';
   }
 
@@ -126,12 +128,15 @@ export class KaraokeApp extends LitElement {
         <a @click=${() => this._navigate('/kj')}>KJ</a>
         <a @click=${() => this._navigate('/guest')}>Guest</a>
         <a @click=${() => this._navigate('/main')}>Main</a>
+        <a @click=${() => this._navigate('/settings')}>Settings</a>
       </nav>
       ${this.route === 'kj'
         ? html`<kj-view></kj-view>`
         : this.route === 'guest'
           ? html`<guest-view></guest-view>`
-          : html`<main-screen-view></main-screen-view>`}
+          : this.route === 'main'
+            ? html`<main-screen-view></main-screen-view>`
+            : html`<settings-profile></settings-profile>`}
     `;
   }
 }
