@@ -21,10 +21,10 @@
 
 ## Tasks
 
-- [ ] **1.0** Set up the Lit application and configure routing (`/`, `/admin`, `/admin/<uuid>`)
+- [x] **1.0** Set up the Lit application and configure routing (`/`, `/admin`, `/admin/<uuid>`)
   - [x] **1.1** Verify Vite outputs the build to `public/dist` and is served by `server.js`.
-  - [ ] **1.2** Implement routing logic in `karaoke-app.js` to load guest, KJ and main components.
-  - [ ] **1.3** Ensure unknown paths fall back to the Lit app from the server.
+  - [x] **1.2** Implement routing logic in `karaoke-app.js` to load guest, KJ and main components.
+  - [x] **1.3** Ensure unknown paths fall back to the Lit app from the server.
 - [ ] **2.0** Implement passkey authentication and guest session joining
   - [ ] **2.1** Add WebAuthn registration and login flows in `kj-login` using `kjAuth.js` endpoints.
   - [ ] **2.2** Display a QR code and room code on the main screen so guests can join.

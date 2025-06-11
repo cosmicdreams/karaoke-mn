@@ -101,8 +101,8 @@ export class KaraokeApp extends LitElement {
 
   _getRoute() {
     const path = window.location.pathname;
-    if (path.startsWith('/kj')) return 'kj';
-    if (path.startsWith('/guest')) return 'guest';
+    if (path === '/' || path.startsWith('/guest')) return 'guest';
+    if (path.startsWith('/admin')) return 'kj';
     if (path.startsWith('/main')) return 'main';
     if (path.startsWith('/settings')) return 'settings';
     return 'guest';
@@ -136,8 +136,8 @@ export class KaraokeApp extends LitElement {
         ? html`<onboarding-flow @onboarding-complete=${this._handleOnboardingComplete}></onboarding-flow>`
         : html`
             <nav>
-              <a @click=${() => this._navigate('/kj')}>KJ</a>
-              <a @click=${() => this._navigate('/guest')}>Guest</a>
+              <a @click=${() => this._navigate('/admin')}>KJ</a>
+              <a @click=${() => this._navigate('/')}>Guest</a>
               <a @click=${() => this._navigate('/main')}>Main</a>
               <a @click=${() => this._navigate('/settings')}>Settings</a>
             </nav>
