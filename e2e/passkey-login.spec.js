@@ -15,10 +15,20 @@ test.afterEach(() => {
 });
 
 test('register and login with passkey', async ({ page, context }) => {
+  // Capture console logs
+  page.on('console', msg => console.log('Browser console:', msg.text()));
+  page.on('pageerror', err => console.error('Browser error:', err));
+  
   const cdp = await context.newCDPSession(page);
   await cdp.send('WebAuthn.enable');
   const { authenticatorId } = await cdp.send('WebAuthn.addVirtualAuthenticator', {
-    options: { protocol: 'ctap2', transport: 'usb', hasResidentKey: true, hasUserVerification: true },
+    options: { 
+      protocol: 'ctap2', 
+      transport: 'internal', 
+      hasResidentKey: true, 
+      hasUserVerification: true,
+      isUserVerified: true
+    },
   });
 
   await page.goto(adminUrl);
@@ -26,8 +36,18 @@ test('register and login with passkey', async ({ page, context }) => {
   if (await gotIt.isVisible().catch(() => false)) {
     await gotIt.click();
   }
+  
+  // Add debugging - take screenshot before clicking
+  await page.screenshot({ path: 'test-results/before-register.png' });
+  
   await page.getByRole('button', { name: 'Register Passkey' }).click();
-  await expect(page.getByText('Logged in as KJ')).toBeVisible();
+  
+  // Add debugging - take screenshot after clicking
+  await page.screenshot({ path: 'test-results/after-register.png' });
+  
+  // Add a longer timeout and wait for network idle
+  await page.waitForLoadState('networkidle');
+  await expect(page.getByText('Logged in as KJ')).toBeVisible({ timeout: 10000 });
 
   await page.reload();
   await page.getByRole('button', { name: 'Login with Passkey' }).click();

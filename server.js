@@ -40,9 +40,12 @@ app.get('/auth/register/options', async (req, res) => {
 
 app.post('/auth/register/verify', async (req, res) => {
   try {
+    console.log('Registration verification request:', JSON.stringify(req.body, null, 2));
     const verified = await verifyRegistration(req.body);
+    console.log('Registration verification result:', verified);
     res.json({ verified });
   } catch (err) {
+    console.error('Registration verification error:', err.message);
     res.status(400).json({ error: err.message });
   }
 });

@@ -5,8 +5,18 @@ export function startServer() {
   const adminId = randomUUID();
   const server = spawn('node', ['server.js'], {
     env: { ...process.env, YOUTUBE_API_KEY: 'test', ADMIN_UUID: adminId },
-    stdio: ['ignore', 'pipe', 'inherit'],
+    stdio: ['ignore', 'pipe', 'pipe'],
   });
+  
+  // Log server output for debugging
+  server.stdout.on('data', (data) => {
+    console.log('Server stdout:', data.toString());
+  });
+  
+  server.stderr.on('data', (data) => {
+    console.log('Server stderr:', data.toString());
+  });
+  
   const ready = new Promise((resolve, reject) => {
     const timer = setTimeout(() => reject(new Error('Server start timeout')), 10000);
     server.stdout.on('data', (data) => {

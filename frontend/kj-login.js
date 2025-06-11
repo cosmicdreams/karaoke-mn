@@ -1,10 +1,13 @@
 import { LitElement, html } from 'lit';
 
-function b64ToBuf(b64url) {
-  const pad = '='.repeat((4 - (b64url.length % 4)) % 4);
-  const base64 = (b64url + pad).replace(/-/g, '+').replace(/_/g, '/');
-  const str = atob(base64);
-  return Uint8Array.from(str, (c) => c.charCodeAt(0));
+function base64urlToUint8Array(base64url) {
+  // Convert base64url to base64
+  const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
+  // Add padding if needed
+  const paddingLength = (4 - base64.length % 4) % 4;
+  const padded = base64 + '='.repeat(paddingLength);
+  // Convert to Uint8Array
+  return Uint8Array.from(atob(padded), c => c.charCodeAt(0));
 }
 
 function bufToB64(buf) {
@@ -15,18 +18,18 @@ function bufToB64(buf) {
 function decodeOpts(opts) {
   if (!opts) return opts;
   const out = { ...opts };
-  if (out.challenge) out.challenge = b64ToBuf(out.challenge);
-  if (out.user && out.user.id) out.user.id = b64ToBuf(out.user.id);
+  if (out.challenge) out.challenge = base64urlToUint8Array(out.challenge);
+  if (out.user && out.user.id) out.user.id = base64urlToUint8Array(out.user.id);
   if (Array.isArray(out.allowCredentials)) {
     out.allowCredentials = out.allowCredentials.map((c) => ({
       ...c,
-      id: b64ToBuf(c.id),
+      id: base64urlToUint8Array(c.id),
     }));
   }
   if (Array.isArray(out.excludeCredentials)) {
     out.excludeCredentials = out.excludeCredentials.map((c) => ({
       ...c,
-      id: b64ToBuf(c.id),
+      id: base64urlToUint8Array(c.id),
     }));
   }
   return out;
@@ -37,6 +40,23 @@ function credToJSON(cred) {
     return bufToB64(cred);
   } else if (Array.isArray(cred)) {
     return cred.map(credToJSON);
+  } else if (cred && cred.constructor && cred.constructor.name === 'PublicKeyCredential') {
+    // Handle PublicKeyCredential specifically
+    return {
+      id: cred.id,
+      rawId: credToJSON(cred.rawId),
+      response: {
+        clientDataJSON: credToJSON(cred.response.clientDataJSON),
+        attestationObject: credToJSON(cred.response.attestationObject)
+      },
+      type: cred.type
+    };
+  } else if (cred && cred.constructor && cred.constructor.name === 'AuthenticatorAttestationResponse') {
+    // Handle AuthenticatorAttestationResponse specifically
+    return {
+      clientDataJSON: credToJSON(cred.clientDataJSON),
+      attestationObject: credToJSON(cred.attestationObject)
+    };
   } else if (cred && typeof cred === 'object') {
     const obj = {};
     for (const [k, v] of Object.entries(cred)) {
@@ -59,23 +79,35 @@ export class KJLogin extends LitElement {
 
   async _register() {
     try {
+      console.log('Starting registration...');
       const optsRaw = await fetch('/auth/register/options').then((r) =>
         r.json(),
       );
+      console.log('Got registration options:', optsRaw);
       const opts = decodeOpts(optsRaw);
+      console.log('Decoded options:', opts);
       const cred = await navigator.credentials.create({ publicKey: opts });
+      console.log('Created credential:', cred);
+      const credJSON = credToJSON(cred);
+      console.log('Credential JSON:', credJSON);
       const res = await fetch('/auth/register/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(credToJSON(cred)),
+        body: JSON.stringify(credJSON),
       }).then((r) => r.json());
+      console.log('Verification response:', res);
       if (res.verified) {
+        console.log('Registration verified successfully');
         this.loggedIn = true;
         this.dispatchEvent(
           new CustomEvent('login', { bubbles: true, composed: true }),
         );
+      } else {
+        console.log('Registration verification failed');
+        alert('Registration failed: ' + (res.error || 'Unknown error'));
       }
     } catch (err) {
+      console.error('Registration error:', err);
       alert(err.message);
     }
   }

@@ -42,7 +42,7 @@ async function startApp() {
       const portMatch = msg.match(/port (\d+)/);
       const detectedPort = portMatch ? portMatch[1] : '3000';
       const link = `http://localhost:${detectedPort}/admin/${adminId}`;
-      console.log(`KJ registration link: ${link}`);
+      //console.log(`KJ registration link: ${link}`);
       await openBrowser(detectedPort, adminId);
     }
   });

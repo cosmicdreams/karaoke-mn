@@ -6,3 +6,4 @@ public/dist/
 .idea
 *storybook.log
 storybook-static
+test-results
