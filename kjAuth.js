@@ -10,7 +10,8 @@ const origin = process.env.ORIGIN || `http://${rpID}:3000`;
 const rpName = 'Karaoke MN';
 
 const kjUser = {
-  id: 'kj',
+  // Use a binary ID per simplewebauthn requirements
+  id: Buffer.from('kj'),
   username: 'KJ',
   devices: [],
   currentChallenge: null,
@@ -25,9 +26,9 @@ function getUserDevice(rawId) {
   return kjUser.devices.find((dev) => dev.credentialID.equals(idBuffer));
 }
 
-export function generateRegistration() {
+export async function generateRegistration() {
   const user = getUser();
-  const opts = generateRegistrationOptions({
+  const opts = await generateRegistrationOptions({
     rpName,
     rpID,
     userID: user.id,
@@ -56,9 +57,9 @@ export async function verifyRegistration(credential) {
   return verification.verified;
 }
 
-export function generateAuth() {
+export async function generateAuth() {
   const user = getUser();
-  const opts = generateAuthenticationOptions({
+  const opts = await generateAuthenticationOptions({
     rpID,
     userVerification: 'preferred',
     allowCredentials: user.devices.map((d) => ({ id: d.credentialID, type: 'public-key' })),

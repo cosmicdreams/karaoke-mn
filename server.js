@@ -31,8 +31,8 @@ app.use(express.static(path.join(__dirname, 'public', 'dist')));
 // Serve legacy/admin static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/auth/register/options', (req, res) => {
-  const opts = generateRegistration();
+app.get('/auth/register/options', async (req, res) => {
+  const opts = await generateRegistration();
   res.json(opts);
 });
 
@@ -45,8 +45,8 @@ app.post('/auth/register/verify', async (req, res) => {
   }
 });
 
-app.get('/auth/login/options', (req, res) => {
-  const opts = generateAuth();
+app.get('/auth/login/options', async (req, res) => {
+  const opts = await generateAuth();
   res.json(opts);
 });
 
