@@ -1,5 +1,6 @@
 ## Relevant Files
 
+- `tasks/tasks-prd-karafun-like-frontend.md` - Task list for Karafun-like frontend PRD.
 - `frontend/` - Lit components for guest, KJ and main views.
 - `server.js` - Express server serving the app and API endpoints.
 - `kjAuth.js` - Helper functions for WebAuthn passkey registration and auth.
@@ -21,7 +22,7 @@
 ## Tasks
 
 - [ ] **1.0** Set up the Lit application and configure routing (`/`, `/admin`, `/admin/<uuid>`)
-  - [ ] **1.1** Verify Vite outputs the build to `public/dist` and is served by `server.js`.
+  - [x] **1.1** Verify Vite outputs the build to `public/dist` and is served by `server.js`.
   - [ ] **1.2** Implement routing logic in `karaoke-app.js` to load guest, KJ and main components.
   - [ ] **1.3** Ensure unknown paths fall back to the Lit app from the server.
 - [ ] **2.0** Implement passkey authentication and guest session joining
