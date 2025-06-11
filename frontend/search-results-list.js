@@ -27,6 +27,7 @@ export class SearchResultsList extends LitElement {
               .result=${r}
               @add-song=${(e) => this.dispatchEvent(e)}
               @save-song=${(e) => this.dispatchEvent(e)}
+              @preview-song=${(e) => this.dispatchEvent(e)}
             ></search-result-item>`,
         )}
       </ul>

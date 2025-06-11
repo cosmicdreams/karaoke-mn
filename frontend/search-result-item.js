@@ -10,6 +10,16 @@ export class SearchResultItem extends LitElement {
     this.result = { videoId: '', title: '' };
   }
 
+  _preview() {
+    this.dispatchEvent(
+      new CustomEvent('preview-song', {
+        detail: this.result,
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
+
   _add() {
     this.dispatchEvent(
       new CustomEvent('add-song', {
@@ -47,8 +57,24 @@ export class SearchResultItem extends LitElement {
       <li>
         <span>${this.result.title}</span>
         <span>
-          <button @click=${this._add} aria-label="Add song: ${this.result.title}">Add</button>
-          <button @click=${this._save} aria-label="Save song: ${this.result.title}">Save</button>
+          <button
+            @click=${this._add}
+            aria-label="Add song: ${this.result.title}"
+          >
+            Add
+          </button>
+          <button
+            @click=${this._save}
+            aria-label="Save song: ${this.result.title}"
+          >
+            Save
+          </button>
+          <button
+            @click=${this._preview}
+            aria-label="Preview song: ${this.result.title}"
+          >
+            Preview
+          </button>
         </span>
       </li>
     `;
