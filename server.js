@@ -20,6 +20,9 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const rpID = process.env.RP_ID || 'localhost';
+const originBase = process.env.ORIGIN || `http://${rpID}:3000`;
+
 const app = express();
 app.use(bodyParser.json());
 
@@ -75,6 +78,7 @@ let db;
 
 let queue = [];
 let sessions = {};
+let currentSession = null;
 let singers = {};
 let singerStats = {};
 let phase2Start = null;
@@ -87,7 +91,7 @@ async function getVideoInfo(videoId) {
   return {
     videoId,
     title: snippet.title,
-    thumbnail: snippet.thumbnails.default.url
+    thumbnail: snippet.thumbnails.default.url,
   };
 }
 
@@ -104,12 +108,13 @@ function createSession() {
   const code = generateRoomCode();
   const session = { id, code };
   sessions[id] = session;
+  currentSession = session;
   if (db) db.collection('sessions').doc(id).set(session);
   return session;
 }
 
 function joinSession(code, name, deviceId) {
-  const session = Object.values(sessions).find(s => s.code === code);
+  const session = Object.values(sessions).find((s) => s.code === code);
   if (!session) throw new Error('Invalid room code');
   if (!name) throw new Error('Missing singer name');
   if (deviceId && !uuidValidate(deviceId)) {
@@ -117,7 +122,7 @@ function joinSession(code, name, deviceId) {
   }
   if (!deviceId) deviceId = uuidv4();
   singers[session.id] = singers[session.id] || [];
-  let singer = singers[session.id].find(s => s.deviceId === deviceId);
+  let singer = singers[session.id].find((s) => s.deviceId === deviceId);
   if (!singer) {
     singer = { id: uuidv4(), name, deviceId };
     singers[session.id].push(singer);
@@ -135,17 +140,29 @@ function joinSession(code, name, deviceId) {
       .doc(singer.id)
       .set({ name: singer.name, deviceId: singer.deviceId });
   }
-  return { sessionId: session.id, singerId: singer.id, deviceId: singer.deviceId };
+  return {
+    sessionId: session.id,
+    singerId: singer.id,
+    deviceId: singer.deviceId,
+  };
 }
 
 app.post('/sessions', async (req, res) => {
   try {
     const session = createSession();
-    const qrCode = await QRCode.toDataURL(session.code);
+    const joinLink = `${originBase}/?code=${encodeURIComponent(session.code)}`;
+    const qrCode = await QRCode.toDataURL(joinLink);
     res.json({ id: session.id, code: session.code, qrCode });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+});
+
+app.get('/sessions/current', async (req, res) => {
+  if (!currentSession) return res.status(404).json({ error: 'No session' });
+  const joinLink = `${originBase}/?code=${encodeURIComponent(currentSession.code)}`;
+  const qrCode = await QRCode.toDataURL(joinLink);
+  res.json({ id: currentSession.id, code: currentSession.code, qrCode });
 });
 
 app.post('/sessions/:code/join', (req, res) => {
@@ -160,7 +177,7 @@ app.post('/sessions/:code/join', (req, res) => {
 });
 
 function addSong(videoId, singer) {
-  const count = queue.filter(q => q.singer === singer).length;
+  const count = queue.filter((q) => q.singer === singer).length;
   if (count >= 3) {
     throw new Error('Singer has reached song limit');
   }
@@ -172,7 +189,7 @@ function addSong(videoId, singer) {
 }
 
 function completeSong(id) {
-  const idx = queue.findIndex(s => s.id === id);
+  const idx = queue.findIndex((s) => s.id === id);
   if (idx === -1) throw new Error('Song not found');
   const [song] = queue.splice(idx, 1);
   if (!singerStats[song.singer]) singerStats[song.singer] = { songsSung: 0 };
@@ -181,33 +198,33 @@ function completeSong(id) {
     db.collection('songs')
       .doc(id)
       .update({ completed: true })
-      .catch(e => console.error('Firestore update error:', e));
+      .catch((e) => console.error('Firestore update error:', e));
   }
   return song;
 }
 
 function removeSong(id) {
-  const idx = queue.findIndex(s => s.id === id);
+  const idx = queue.findIndex((s) => s.id === id);
   if (idx === -1) throw new Error('Song not found');
   const [song] = queue.splice(idx, 1);
   if (db) {
     db.collection('songs')
       .doc(id)
       .delete()
-      .catch(e => console.error('Firestore delete error:', e));
+      .catch((e) => console.error('Firestore delete error:', e));
   }
   return song;
 }
 
 function replaceSong(id, videoId) {
-  const song = queue.find(s => s.id === id);
+  const song = queue.find((s) => s.id === id);
   if (!song) throw new Error('Song not found');
   song.videoId = videoId;
   if (db) {
     db.collection('songs')
       .doc(id)
       .update({ videoId })
-      .catch(e => console.error('Firestore update error:', e));
+      .catch((e) => console.error('Firestore update error:', e));
   }
   return song;
 }
@@ -215,27 +232,29 @@ function replaceSong(id, videoId) {
 function reorderSongs(order) {
   if (!Array.isArray(order)) throw new Error('order must be an array');
   const map = {};
-  queue.forEach(s => { map[s.id] = s; });
+  queue.forEach((s) => {
+    map[s.id] = s;
+  });
   const newQueue = [];
-  order.forEach(id => {
+  order.forEach((id) => {
     if (map[id]) {
       newQueue.push(map[id]);
       delete map[id];
     }
   });
-  const remaining = queue.filter(s => map[s.id]);
+  const remaining = queue.filter((s) => map[s.id]);
   queue = newQueue.concat(remaining);
 }
 
 function skipSong(id) {
-  const idx = queue.findIndex(s => s.id === id);
+  const idx = queue.findIndex((s) => s.id === id);
   if (idx === -1) throw new Error('Song not found');
   const [song] = queue.splice(idx, 1);
   if (db) {
     db.collection('songs')
       .doc(id)
       .update({ skipped: true })
-      .catch(e => console.error('Firestore update error:', e));
+      .catch((e) => console.error('Firestore update error:', e));
   }
   return song;
 }
@@ -248,12 +267,14 @@ app.get('/search', async (req, res) => {
       part: 'snippet',
       q: q + ' karaoke',
       maxResults: 5,
-      type: 'video'
+      type: 'video',
     });
-    res.json(r.data.items.map(item => ({
-      videoId: item.id.videoId,
-      title: item.snippet.title
-    })));
+    res.json(
+      r.data.items.map((item) => ({
+        videoId: item.id.videoId,
+        title: item.snippet.title,
+      })),
+    );
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -262,7 +283,8 @@ app.get('/search', async (req, res) => {
 app.get('/preview', async (req, res) => {
   const { url, videoId } = req.query;
   const id = parseVideoId(videoId || url);
-  if (!id) return res.status(400).json({ error: 'Invalid or missing video ID' });
+  if (!id)
+    return res.status(400).json({ error: 'Invalid or missing video ID' });
   try {
     const info = await getVideoInfo(id);
     res.json(info);
@@ -274,7 +296,8 @@ app.get('/preview', async (req, res) => {
 app.post('/songs', async (req, res) => {
   const { url, videoId, singer } = req.body;
   const id = parseVideoId(videoId || url);
-  if (!id || !singer) return res.status(400).json({ error: 'Missing videoId or singer' });
+  if (!id || !singer)
+    return res.status(400).json({ error: 'Missing videoId or singer' });
   try {
     const song = addSong(id, singer);
     res.json(song);
@@ -286,14 +309,14 @@ app.post('/songs', async (req, res) => {
 app.post('/songs/:id/error', (req, res) => {
   const { id } = req.params;
   const { error } = req.body;
-  const song = queue.find(s => s.id === id);
+  const song = queue.find((s) => s.id === id);
   if (!song) return res.status(404).json({ error: 'Song not found' });
   song.error = error || 'unknown';
   if (db) {
     db.collection('songs')
       .doc(id)
       .update({ error: song.error })
-      .catch(e => console.error('Firestore update error:', e));
+      .catch((e) => console.error('Firestore update error:', e));
   }
   res.json({ success: true });
 });
@@ -321,7 +344,8 @@ app.delete('/songs/:id', (req, res) => {
 app.put('/songs/:id', (req, res) => {
   const { id } = req.params;
   const vid = parseVideoId(req.body.videoId || req.body.url);
-  if (!vid) return res.status(400).json({ error: 'Invalid or missing videoId' });
+  if (!vid)
+    return res.status(400).json({ error: 'Invalid or missing videoId' });
   try {
     replaceSong(id, vid);
     res.json({ success: true });
@@ -362,8 +386,9 @@ app.post('/phase2', (req, res) => {
 });
 
 function inPhase2() {
-  const allSung = Object.keys(singerStats).length > 0 &&
-    Object.values(singerStats).every(s => s.songsSung > 0);
+  const allSung =
+    Object.keys(singerStats).length > 0 &&
+    Object.values(singerStats).every((s) => s.songsSung > 0);
   if (allSung) return true;
   if (phase2Start && Date.now() >= phase2Start) return true;
   return false;
@@ -384,8 +409,11 @@ app.get('/admin', (req, res) => {
 });
 
 // Serve the Lit app from the Vite build output for all non-API, non-admin routes
-app.get(/^\/(?!api|auth|sessions|songs|search|preview|queue|phase2|public|dist|assets|admin).*/, (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'dist', 'index.html'));
-});
+app.get(
+  /^\/(?!api|auth|sessions|songs|search|preview|queue|phase2|public|dist|assets|admin).*/,
+  (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'dist', 'index.html'));
+  },
+);
 
 export default app;
