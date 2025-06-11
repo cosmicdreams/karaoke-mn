@@ -123,3 +123,9 @@ npm run test:e2e
 
 ## Tasks
 See `Tasks.md` for the full implementation checklist.
+
+## Passkeys
+
+See [PASSKEYS.md](./PASSKEYS.md) for details on how passkeys are verified and why
+the project uses the `@simplewebauthn/server` library for server-side
+implementation.
