@@ -20,6 +20,16 @@ export class SearchResultItem extends LitElement {
     );
   }
 
+  _save() {
+    this.dispatchEvent(
+      new CustomEvent('save-song', {
+        detail: this.result,
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
+
   static styles = css`
     li {
       display: flex;
@@ -36,7 +46,10 @@ export class SearchResultItem extends LitElement {
     return html`
       <li>
         <span>${this.result.title}</span>
-        <button @click=${this._add}>Add</button>
+        <span>
+          <button @click=${this._add}>Add</button>
+          <button @click=${this._save}>Save</button>
+        </span>
       </li>
     `;
   }

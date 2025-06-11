@@ -43,6 +43,16 @@ export class GuestSongSearch extends LitElement {
     });
   }
 
+  _saveSong(e) {
+    this.dispatchEvent(
+      new CustomEvent('save-song', {
+        detail: e.detail,
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
+
   static styles = css`
     :host {
       display: block;
@@ -57,6 +67,7 @@ export class GuestSongSearch extends LitElement {
         : html`<search-results-list
             .results=${this.results}
             @add-song=${this._addSong}
+            @save-song=${this._saveSong}
           ></search-results-list>`}
     `;
   }

@@ -1,6 +1,8 @@
 import { LitElement, html, css } from 'lit';
 import './youtube-player.js';
 import './main-queue-display.js';
+import './interstitial-player.js';
+import './on-screen-announcement.js';
 
 export class MainScreenView extends LitElement {
   static properties = {
@@ -39,8 +41,12 @@ export class MainScreenView extends LitElement {
   render() {
     const current = this.queue[0];
     return html`
-      <youtube-player .videoId=${current ? current.videoId : ''}></youtube-player>
+      <youtube-player
+        .videoId=${current ? current.videoId : ''}
+      ></youtube-player>
       <main-queue-display .queue=${this.queue.slice(1, 6)}></main-queue-display>
+      <interstitial-player id="interstitial"></interstitial-player>
+      <on-screen-announcement id="announcement"></on-screen-announcement>
     `;
   }
 }

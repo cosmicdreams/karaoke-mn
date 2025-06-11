@@ -22,7 +22,12 @@ export class SearchResultsList extends LitElement {
     return html`
       <ul>
         ${this.results.map(
-          (r) => html`<search-result-item .result=${r}></search-result-item>`,
+          (r) =>
+            html`<search-result-item
+              .result=${r}
+              @add-song=${(e) => this.dispatchEvent(e)}
+              @save-song=${(e) => this.dispatchEvent(e)}
+            ></search-result-item>`,
         )}
       </ul>
     `;

@@ -3,22 +3,27 @@
 This checklist captures the work required to deliver the features outlined in **PRD.md** and will help finalize the Business Requirements Document (BRD).
 
 ## Setup
+
 - [ ] Set up Headless Drupal for curated content.
 
 ## Core Functionality
+
 All tasks completed.
 
 ## Technical Tasks
+
 All tasks completed.
 
 ## Future Enhancements
-- [ ] Maintain a KJ-curated catalog of "KJ's Pick" videos.
-- [ ] Store each guest's personal songbook locally.
-- [ ] Provide interstitial and bumper video support.
+
+- [x] Maintain a KJ-curated catalog of "KJ's Pick" videos.
+- [x] Store each guest's personal songbook locally.
+- [x] Provide interstitial and bumper video support.
 - [ ] Implement duet and group collaboration features.
-- [ ] Support themed sessions and on-screen announcements.
+- [x] Support themed sessions and on-screen announcements.
 
 ## Completed Tasks
+
 - Initialize the repository and development environment.
 - Configure Firebase and create a Firestore instance.
 - Acquire a YouTube API key for search.

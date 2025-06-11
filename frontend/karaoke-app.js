@@ -4,6 +4,7 @@ import './kj-dashboard.js';
 import './guest-join-session.js';
 import './guest-song-search.js';
 import './guest-queue-view.js';
+import './guest-songbook.js';
 import './main-screen-view.js';
 
 class KJView extends LitElement {
@@ -42,6 +43,11 @@ class GuestView extends LitElement {
     this.code = '';
   }
 
+  _onSaveSong(e) {
+    const book = this.renderRoot?.querySelector('guest-songbook');
+    book?.addSong(e.detail);
+  }
+
   _onJoined(e) {
     const { name, code } = e.detail;
     this.joined = true;
@@ -52,14 +58,19 @@ class GuestView extends LitElement {
   render() {
     return this.joined
       ? html`
-          <guest-song-search .singer=${this.singer}></guest-song-search>
+          <guest-song-search
+            .singer=${this.singer}
+            @save-song=${this._onSaveSong}
+          ></guest-song-search>
+          <guest-songbook .singer=${this.singer}></guest-songbook>
           <guest-queue-view .singer=${this.singer}></guest-queue-view>
         `
-      : html`<guest-join-session @session-joined=${this._onJoined}></guest-join-session>`;
+      : html`<guest-join-session
+          @session-joined=${this._onJoined}
+        ></guest-join-session>`;
   }
 }
 customElements.define('guest-view', GuestView);
-
 
 export class KaraokeApp extends LitElement {
   static properties = {
