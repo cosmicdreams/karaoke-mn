@@ -32,4 +32,4 @@ Each item is independent so multiple Codex sessions can work in parallel.
 
 ## Shared Components
 
-- [ ] Implement reusable pieces: `qr-code-display`, `loading-spinner`, `modal-dialog` and `toast-notification`.
+ - [x] Implement reusable pieces: `qr-code-display`, `loading-spinner`, `modal-dialog` and `toast-notification`.
