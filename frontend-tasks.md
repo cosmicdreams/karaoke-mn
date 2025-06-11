@@ -7,7 +7,7 @@ Each item is independent so multiple Codex sessions can work in parallel.
 
 - [x] Install Lit and configure a modern build system (e.g. Vite) for component development.
 - [x] Set up ESLint/Prettier for consistent styling.
-- [x] Configure Jest with a browser environment for UI tests.
+- [x] Configure Vitest with a browser environment for UI tests.
 
 ## Core App Structure
 

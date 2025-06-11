@@ -2,8 +2,7 @@ export default {
   env: {
     browser: true,
     es2022: true,
-    node: true,
-    jest: true
+    node: true
   },
   extends: ['eslint:recommended', 'plugin:import/recommended', 'plugin:storybook/recommended'],
   parserOptions: {
