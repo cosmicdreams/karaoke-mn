@@ -15,10 +15,10 @@ Each item is independent so multiple Codex sessions can work in parallel.
 
 ## KJ Components
 
-- [ ] Create `kj-login` handling passkey authentication.
-- [ ] Build `kj-dashboard` as the container for KJ controls.
-- [ ] Implement `kj-session-creator` to start a session and display the room code/QR.
-- [ ] Implement `kj-control-panel` for queue management.
+- [x] Create `kj-login` handling passkey authentication.
+- [x] Build `kj-dashboard` as the container for KJ controls.
+- [x] Implement `kj-session-creator` to start a session and display the room code/QR.
+- [x] Implement `kj-control-panel` for queue management.
 
 ## Guest Components
 
