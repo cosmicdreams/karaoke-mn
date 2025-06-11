@@ -25,10 +25,10 @@
   - [x] **1.1** Verify Vite outputs the build to `public/dist` and is served by `server.js`.
   - [x] **1.2** Implement routing logic in `karaoke-app.js` to load guest, KJ and main components.
   - [x] **1.3** Ensure unknown paths fall back to the Lit app from the server.
-- [ ] **2.0** Implement passkey authentication and guest session joining
-  - [ ] **2.1** Add WebAuthn registration and login flows in `kj-login` using `kjAuth.js` endpoints.
-  - [ ] **2.2** Display a QR code and room code on the main screen so guests can join.
-  - [ ] **2.3** Implement `guest-join-session` component to join via QR or room code.
+- [x] **2.0** Implement passkey authentication and guest session joining
+  - [x] **2.1** Add WebAuthn registration and login flows in `kj-login` using `kjAuth.js` endpoints.
+  - [x] **2.2** Display a QR code and room code on the main screen so guests can join.
+  - [x] **2.3** Implement `guest-join-session` component to join via QR or room code.
 - [ ] **3.0** Build the guest search interface that appends “karaoke” to queries
   - [ ] **3.1** Connect `guest-song-search` to the `/search` API and show results.
   - [ ] **3.2** Use `search-results-list` and `search-result-item` to display YouTube songs.

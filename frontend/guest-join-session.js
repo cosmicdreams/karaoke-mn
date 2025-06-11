@@ -15,6 +15,13 @@ export class GuestJoinSession extends LitElement {
     this.message = '';
   }
 
+  connectedCallback() {
+    super.connectedCallback();
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    if (code) this.code = code.toUpperCase();
+  }
+
   _onCodeInput(e) {
     this.code = e.target.value.toUpperCase();
   }
@@ -87,7 +94,12 @@ export class GuestJoinSession extends LitElement {
 
   render() {
     return html`
-      <form @submit=${(e) => { e.preventDefault(); this._join(); }}>
+      <form
+        @submit=${(e) => {
+          e.preventDefault();
+          this._join();
+        }}
+      >
         <div>
           <label for="room-code">Room Code</label>
           <input

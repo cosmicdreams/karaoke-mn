@@ -52,9 +52,15 @@ describe('end-to-end server', () => {
     await request(app).post(`/sessions/${code}/join`).send({ name: 'A' });
     await request(app).post(`/sessions/${code}/join`).send({ name: 'B' });
 
-    await request(app).post('/songs').send({ videoId: 'AAAAAAAAAAA', singer: 'A' });
-    await request(app).post('/songs').send({ videoId: 'BBBBBBBBBBB', singer: 'A' });
-    await request(app).post('/songs').send({ videoId: 'CCCCCCCCCCC', singer: 'B' });
+    await request(app)
+      .post('/songs')
+      .send({ videoId: 'AAAAAAAAAAA', singer: 'A' });
+    await request(app)
+      .post('/songs')
+      .send({ videoId: 'BBBBBBBBBBB', singer: 'A' });
+    await request(app)
+      .post('/songs')
+      .send({ videoId: 'CCCCCCCCCCC', singer: 'B' });
 
     const queueRes = await request(app).get('/queue');
     expect(queueRes.statusCode).toBe(200);
@@ -63,5 +69,15 @@ describe('end-to-end server', () => {
       'CCCCCCCCCCC',
       'BBBBBBBBBBB',
     ]);
+  });
+
+  test('current session endpoint returns QR code', async () => {
+    const sessionRes = await request(app).post('/sessions');
+    const { code } = sessionRes.body;
+
+    const current = await request(app).get('/sessions/current');
+    expect(current.statusCode).toBe(200);
+    expect(current.body.code).toBe(code);
+    expect(current.body.qrCode).toMatch(/^data:image\/png;base64,/);
   });
 });
