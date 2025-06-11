@@ -1,4 +1,3 @@
-// @jest-environment node
 import { describe, test, beforeEach, expect, vi } from 'vitest';
 import { TextEncoder, TextDecoder } from 'util';
 global.TextEncoder = TextEncoder;

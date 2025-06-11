@@ -100,5 +100,26 @@ deploying. Deploy with:
 firebase deploy --only functions:startSession
 ```
 
+## Testing
+
+Unit tests run with [Vitest](https://vitest.dev/):
+
+```bash
+npm test
+```
+
+Use [Storybook 9](https://storybook.js.org/) for component testing and visual regression checks:
+
+```bash
+npm run storybook
+npm run test:storybook
+```
+
+End-to-end tests are written with [Playwright](https://playwright.dev/):
+
+```bash
+npm run test:e2e
+```
+
 ## Tasks
 See `Tasks.md` for the full implementation checklist.
