@@ -33,3 +33,21 @@ Each item is independent so multiple Codex sessions can work in parallel.
 ## Shared Components
 
  - [x] Implement reusable pieces: `qr-code-display`, `loading-spinner`, `modal-dialog` and `toast-notification`.
+
+## Quality & Developer Experience
+
+- [ ] Integrate Storybook for isolated component development and visual testing (use Storybook 9's built-in tests for component testing).
+- [ ] Add end-to-end tests for critical user flows using Playwright.
+
+## Accessibility
+
+- [ ] Audit all components for keyboard navigation and screen reader support.
+- [ ] Add ARIA labels and roles to custom components where appropriate.
+- [ ] Ensure color contrast and font sizes meet accessibility standards.
+
+## User Experience Enhancements
+
+- [ ] Implement a settings/profile screen for KJ and guests (theme, preferences, etc.).
+- [ ] Add onboarding/tutorial flow for first-time users (skippable, highlights main features).
+- [ ] Add analytics/stats display (e.g., most popular songs, top singers, session summary).
+- [ ] Implement error/offline handling screens and banners for network or backend issues.
