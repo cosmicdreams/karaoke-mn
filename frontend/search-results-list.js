@@ -1,0 +1,32 @@
+import { LitElement, html, css } from 'lit';
+import './search-result-item.js';
+
+export class SearchResultsList extends LitElement {
+  static properties = {
+    results: { type: Array },
+  };
+
+  constructor() {
+    super();
+    this.results = [];
+  }
+
+  static styles = css`
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+  `;
+
+  render() {
+    return html`
+      <ul>
+        ${this.results.map(
+          (r) => html`<search-result-item .result=${r}></search-result-item>`,
+        )}
+      </ul>
+    `;
+  }
+}
+
+customElements.define('search-results-list', SearchResultsList);

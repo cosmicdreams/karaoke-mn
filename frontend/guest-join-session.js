@@ -44,7 +44,7 @@ export class GuestJoinSession extends LitElement {
         this.message = `Joined session as ${this.name}`;
         this.dispatchEvent(
           new CustomEvent('session-joined', {
-            detail: data,
+            detail: { ...data, code: this.code, name: this.name.trim() },
             bubbles: true,
             composed: true,
           }),

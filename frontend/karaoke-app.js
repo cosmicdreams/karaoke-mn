@@ -2,6 +2,9 @@ import { LitElement, html, css } from 'lit';
 import './kj-login.js';
 import './kj-dashboard.js';
 import './guest-join-session.js';
+import './guest-song-search.js';
+import './guest-queue-view.js';
+import './main-screen-view.js';
 
 class KJView extends LitElement {
   static properties = {
@@ -26,18 +29,37 @@ class KJView extends LitElement {
 customElements.define('kj-view', KJView);
 
 class GuestView extends LitElement {
+  static properties = {
+    joined: { state: true },
+    singer: { state: true },
+    code: { state: true },
+  };
+
+  constructor() {
+    super();
+    this.joined = false;
+    this.singer = '';
+    this.code = '';
+  }
+
+  _onJoined(e) {
+    const { name, code } = e.detail;
+    this.joined = true;
+    this.singer = name;
+    this.code = code;
+  }
+
   render() {
-    return html`<guest-join-session></guest-join-session>`;
+    return this.joined
+      ? html`
+          <guest-song-search .singer=${this.singer}></guest-song-search>
+          <guest-queue-view .singer=${this.singer}></guest-queue-view>
+        `
+      : html`<guest-join-session @session-joined=${this._onJoined}></guest-join-session>`;
   }
 }
 customElements.define('guest-view', GuestView);
 
-class MainScreenView extends LitElement {
-  render() {
-    return html`<div>Main Screen View</div>`;
-  }
-}
-customElements.define('main-screen-view', MainScreenView);
 
 export class KaraokeApp extends LitElement {
   static properties = {
