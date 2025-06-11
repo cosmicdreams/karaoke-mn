@@ -2,12 +2,14 @@ import { LitElement, html, css } from 'lit';
 import './search-bar.js';
 import './search-results-list.js';
 import './loading-spinner.js';
+import './video-preview-modal.js';
 
 export class GuestSongSearch extends LitElement {
   static properties = {
     results: { state: true },
     loading: { state: true },
     singer: { type: String },
+    preview: { state: true },
   };
 
   constructor() {
@@ -15,11 +17,15 @@ export class GuestSongSearch extends LitElement {
     this.results = [];
     this.loading = false;
     this.singer = '';
+    this.preview = null;
   }
 
   async _onSearch(e) {
-    const q = e.detail.value.trim();
-    if (!q) return;
+    const input = e.detail.value.trim();
+    if (!input) return;
+    const q = input.toLowerCase().includes('karaoke')
+      ? input
+      : `${input} karaoke`;
     this.loading = true;
     try {
       const res = await fetch('/search?q=' + encodeURIComponent(q));
@@ -41,6 +47,22 @@ export class GuestSongSearch extends LitElement {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ videoId, singer: this.singer }),
     });
+  }
+
+  async _previewSong(e) {
+    const { videoId } = e.detail;
+    if (!videoId) return;
+    try {
+      const res = await fetch(
+        `/preview?videoId=${encodeURIComponent(videoId)}`,
+      );
+      if (res.ok) {
+        const info = await res.json();
+        this.preview = info;
+      }
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   _saveSong(e) {
@@ -68,7 +90,14 @@ export class GuestSongSearch extends LitElement {
             .results=${this.results}
             @add-song=${this._addSong}
             @save-song=${this._saveSong}
+            @preview-song=${this._previewSong}
           ></search-results-list>`}
+      <video-preview-modal
+        .videoId=${this.preview?.videoId || ''}
+        .title=${this.preview?.title || ''}
+        .open=${!!this.preview}
+        @click=${() => (this.preview = null)}
+      ></video-preview-modal>
     `;
   }
 }
