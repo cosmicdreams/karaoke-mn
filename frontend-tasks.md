@@ -23,12 +23,12 @@ Each item is independent so multiple Codex sessions can work in parallel.
 ## Guest Components
 
 - [x] Create `guest-join-session` for entering room code and singer name.
-- [ ] Implement `guest-song-search` with `search-bar`, `search-results-list` and `search-result-item` subcomponents.
-- [ ] Build `guest-queue-view` showing a guest their queued songs.
+- [x] Implement `guest-song-search` with `search-bar`, `search-results-list` and `search-result-item` subcomponents.
+- [x] Build `guest-queue-view` showing a guest their queued songs.
 
 ## Main Screen
 
-- [ ] Create `main-screen-view` hosting `youtube-player`, `main-queue-display` and `session-info-display`.
+- [x] Create `main-screen-view` hosting `youtube-player`, `main-queue-display` and `session-info-display`.
 
 ## Shared Components
 
