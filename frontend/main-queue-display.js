@@ -19,8 +19,10 @@ export class MainQueueDisplay extends LitElement {
 
   render() {
     return html`
-      <ul>
-        ${this.queue.map((q) => html`<li>${q.singer}: ${q.videoId}</li>`)}
+      <ul aria-label="Upcoming singers queue">
+        ${this.queue.map((q) =>
+          html`<li>Singer: ${q.singer}, Song ID: ${q.videoId}</li>`
+        )}
       </ul>
     `;
   }
