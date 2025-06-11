@@ -87,20 +87,32 @@ export class GuestJoinSession extends LitElement {
 
   render() {
     return html`
-      <div>
-        <input
-          placeholder="Room Code"
-          .value=${this.code}
-          @input=${this._onCodeInput}
-        />
-        <input
-          placeholder="Your Name"
-          .value=${this.name}
-          @input=${this._onNameInput}
-        />
-      <button @click=${this._join}>Join</button>
-        ${this.message ? html`<p>${this.message}</p>` : ''}
-      </div>
+      <form @submit=${(e) => { e.preventDefault(); this._join(); }}>
+        <div>
+          <label for="room-code">Room Code</label>
+          <input
+            id="room-code"
+            placeholder="Room Code"
+            .value=${this.code}
+            @input=${this._onCodeInput}
+            autocomplete="off"
+            required
+          />
+        </div>
+        <div>
+          <label for="singer-name">Your Name</label>
+          <input
+            id="singer-name"
+            placeholder="Your Name"
+            .value=${this.name}
+            @input=${this._onNameInput}
+            autocomplete="off"
+            required
+          />
+        </div>
+        <button type="submit" aria-label="Join session">Join</button>
+        ${this.message ? html`<p aria-live="polite">${this.message}</p>` : ''}
+      </form>
       <toast-notification id="toast"></toast-notification>
     `;
   }
