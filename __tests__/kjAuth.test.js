@@ -17,7 +17,7 @@ vi.mock('@simplewebauthn/server', () => ({
 }));
 
 import * as server from '@simplewebauthn/server';
-import { generateRegistration, verifyRegistration, generateAuth, verifyAuth } from '../kjAuth.js';
+import { generateRegistration, verifyRegistration, generateAuth, verifyAuth } from '../backend/kjAuth.js';
 
 describe('kjAuth', () => {
   beforeEach(() => {

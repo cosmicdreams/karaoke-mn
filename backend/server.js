@@ -6,8 +6,8 @@ import { google } from 'googleapis';
 import { getFirestore } from './firebase.js';
 import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
 import QRCode from 'qrcode';
-import { parseVideoId } from './parseVideoId.js';
-import { getFairQueue } from './fairPlay.js';
+import { parseVideoId } from '../parseVideoId.js';
+import { getFairQueue } from '../fairPlay.js';
 import {
   generateRegistration,
   verifyRegistration,
@@ -29,9 +29,9 @@ const app = express();
 app.use(bodyParser.json());
 
 // Serve static files for the Lit UI first
-app.use(express.static(path.join(__dirname, 'public', 'dist')));
+app.use(express.static(path.join(__dirname, '../public', 'dist')));
 // Serve legacy/admin static files
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '../public')));
 
 app.get('/auth/register/options', async (req, res) => {
   const opts = await generateRegistration();
@@ -409,18 +409,18 @@ app.get('/queue', (req, res) => {
 
 // Admin UI routes served by the Lit app
 app.get('/admin/:id', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'dist', 'index.html'));
+  res.sendFile(path.join(__dirname, '../public', 'dist', 'index.html'));
 });
 
 app.get('/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'dist', 'index.html'));
+  res.sendFile(path.join(__dirname, '../public', 'dist', 'index.html'));
 });
 
 // Serve the Lit app from the Vite build output for all non-API, non-admin routes
 app.get(
   /^\/(?!api|auth|sessions|songs|search|preview|queue|phase2|public|dist|assets|admin).*/,
   (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'dist', 'index.html'));
+    res.sendFile(path.join(__dirname, '../public', 'dist', 'index.html'));
   },
 );
 

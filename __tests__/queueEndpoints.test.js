@@ -10,7 +10,7 @@ let app;
 beforeEach(async () => {
   vi.resetModules();
   process.env.YOUTUBE_API_KEY = 'test';
-  const mod = await import('../server.js');
+  const mod = await import('../backend/server.js');
   app = mod.default || mod;
 });
 

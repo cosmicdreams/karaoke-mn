@@ -30,7 +30,7 @@ async function startApp() {
     return;
   }
 
-  const server = spawn('node', ['server.js'], {
+  const server = spawn('node', ['backend/server.js'], {
     stdio: ['inherit', 'pipe', 'inherit'],
     env: { ...process.env, ADMIN_UUID: adminId },
   });
