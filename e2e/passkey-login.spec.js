@@ -47,11 +47,15 @@ test('register and login with passkey', async ({ page, context }) => {
   
   // Add a longer timeout and wait for network idle
   await page.waitForLoadState('networkidle');
-  await expect(page.getByText('Logged in as KJ')).toBeVisible({ timeout: 10000 });
+  await expect(
+    page.getByRole('button', { name: 'Start a new karaoke session' })
+  ).toBeVisible({ timeout: 10000 });
 
   await page.reload();
   await page.getByRole('button', { name: 'Login with Passkey' }).click();
-  await expect(page.getByText('Logged in as KJ')).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'Start a new karaoke session' })
+  ).toBeVisible();
 
   await cdp.send('WebAuthn.removeVirtualAuthenticator', { authenticatorId });
 });
