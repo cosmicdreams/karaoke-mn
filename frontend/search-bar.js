@@ -44,9 +44,12 @@ export class SearchBar extends LitElement {
 
   render() {
     return html`
+      <label for="song-search-input" style="position:absolute;left:-9999px;">Search songs</label>
       <input
+        id="song-search-input"
         type="text"
         placeholder="Search songs"
+        aria-label="Search songs"
         .value=${this.value}
         @input=${this._onInput}
         @keydown=${this._onKeyDown}
