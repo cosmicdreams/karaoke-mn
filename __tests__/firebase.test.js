@@ -1,12 +1,17 @@
-const admin = require('firebase-admin');
+import { describe, test, beforeEach, expect, vi } from 'vitest';
+import admin from 'firebase-admin';
 
-jest.mock('firebase-admin', () => {
-  const firestore = jest.fn();
-  return {
+vi.mock('firebase-admin', () => {
+  const firestore = vi.fn();
+  const mock = {
     apps: [],
-    initializeApp: jest.fn(),
-    credential: { cert: jest.fn(() => ({})) },
+    initializeApp: vi.fn(),
+    credential: { cert: vi.fn(() => ({})) },
     firestore,
+  };
+  return {
+    ...mock,
+    default: mock,
   };
 });
 
@@ -15,28 +20,25 @@ describe('getFirestore', () => {
     admin.apps.length = 0;
     admin.initializeApp.mockClear();
     admin.firestore.mockClear();
-    delete require.cache[require.resolve('../firebase')];
     delete process.env.FIREBASE_PROJECT_ID;
   });
 
-  test('returns null when no credentials or emulator', () => {
+  test('returns null when no credentials or emulator', async () => {
     delete process.env.GOOGLE_APPLICATION_CREDENTIALS;
     delete process.env.FIRESTORE_EMULATOR_HOST;
-
-    const { getFirestore } = require('../firebase');
-    const db = getFirestore();
+    const mod = await import('../firebase.js');
+    const db = mod.getFirestore();
     expect(db).toBeNull();
     expect(admin.initializeApp).not.toHaveBeenCalled();
   });
 
-  test('initializes when emulator configured', () => {
+  test('initializes when emulator configured', async () => {
     delete process.env.GOOGLE_APPLICATION_CREDENTIALS;
     process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
     const fakeDb = {};
     admin.firestore.mockReturnValue(fakeDb);
-
-    const { getFirestore } = require('../firebase');
-    const db = getFirestore();
+    const mod = await import('../firebase.js');
+    const db = mod.getFirestore();
     expect(admin.initializeApp).toHaveBeenCalledWith({});
     expect(db).toBe(fakeDb);
   });

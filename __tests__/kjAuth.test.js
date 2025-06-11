@@ -1,6 +1,7 @@
-jest.mock('@simplewebauthn/server', () => ({
-  generateRegistrationOptions: jest.fn(() => ({ challenge: 'reg-challenge' })),
-  verifyRegistrationResponse: jest.fn(() => Promise.resolve({
+import { describe, test, beforeEach, expect, vi } from 'vitest';
+vi.mock('@simplewebauthn/server', () => ({
+  generateRegistrationOptions: vi.fn(() => ({ challenge: 'reg-challenge' })),
+  verifyRegistrationResponse: vi.fn(() => Promise.resolve({
     verified: true,
     registrationInfo: {
       credentialPublicKey: 'pk',
@@ -8,19 +9,19 @@ jest.mock('@simplewebauthn/server', () => ({
       counter: 0,
     },
   })),
-  generateAuthenticationOptions: jest.fn(() => ({ challenge: 'auth-challenge' })),
-  verifyAuthenticationResponse: jest.fn(() => Promise.resolve({
+  generateAuthenticationOptions: vi.fn(() => ({ challenge: 'auth-challenge' })),
+  verifyAuthenticationResponse: vi.fn(() => Promise.resolve({
     verified: true,
     authenticationInfo: { newCounter: 1 },
   })),
 }));
 
-const server = require('@simplewebauthn/server');
-const { generateRegistration, verifyRegistration, generateAuth, verifyAuth } = require('../kjAuth');
+import * as server from '@simplewebauthn/server';
+import { generateRegistration, verifyRegistration, generateAuth, verifyAuth } from '../kjAuth.js';
 
 describe('kjAuth', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   test('registration and auth flow', async () => {

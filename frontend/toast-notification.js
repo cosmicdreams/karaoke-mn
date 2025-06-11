@@ -46,7 +46,7 @@ export class ToastNotification extends LitElement {
   `;
 
   render() {
-    return html`${this.message}`;
+    return html`<div role="status" aria-live="polite">${this.message}</div>`;
   }
 }
 

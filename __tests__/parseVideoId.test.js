@@ -1,4 +1,5 @@
-const { parseVideoId } = require('../parseVideoId');
+import { describe, test, expect } from 'vitest';
+import { parseVideoId } from '../parseVideoId.js';
 
 describe('parseVideoId', () => {
   test('returns ID when input is already an ID', () => {

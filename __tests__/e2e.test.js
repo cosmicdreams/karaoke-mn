@@ -1,16 +1,18 @@
 // @jest-environment node
-const { TextEncoder, TextDecoder } = require('util');
+import { describe, test, beforeEach, expect, vi } from 'vitest';
+import { TextEncoder, TextDecoder } from 'util';
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
-const request = require('supertest');
+import request from 'supertest';
 
 let app;
 
 describe('end-to-end server', () => {
-  beforeEach(() => {
-    jest.resetModules();
+  beforeEach(async () => {
+    vi.resetModules();
     process.env.YOUTUBE_API_KEY = 'test';
-    app = require('../server');
+    const mod = await import('../server.js');
+    app = mod.default || mod;
   });
 
   test('session flow add and complete song', async () => {
