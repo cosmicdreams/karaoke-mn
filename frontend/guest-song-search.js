@@ -1,6 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import './search-bar.js';
 import './search-results-list.js';
+import './loading-spinner.js';
 
 export class GuestSongSearch extends LitElement {
   static properties = {
@@ -52,7 +53,7 @@ export class GuestSongSearch extends LitElement {
     return html`
       <search-bar @search=${this._onSearch}></search-bar>
       ${this.loading
-        ? html`<p>Loading...</p>`
+        ? html`<loading-spinner></loading-spinner>`
         : html`<search-results-list
             .results=${this.results}
             @add-song=${this._addSong}
