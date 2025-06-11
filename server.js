@@ -22,6 +22,8 @@ const __dirname = path.dirname(__filename);
 
 const rpID = process.env.RP_ID || 'localhost';
 const originBase = process.env.ORIGIN || `http://${rpID}:3000`;
+const adminId = process.env.ADMIN_UUID || uuidv4();
+process.env.ADMIN_UUID = adminId;
 
 const app = express();
 app.use(bodyParser.json());
@@ -72,7 +74,10 @@ let db;
 
   const port = process.env.PORT || 3000;
   if (import.meta.url === `file://${process.argv[1]}`) {
-    app.listen(port, () => console.log(`Server running on port ${port}`));
+    app.listen(port, () => {
+      console.log(`Server running on port ${port}`);
+      console.log(`KJ registration link: ${originBase}/admin/${adminId}`);
+    });
   }
 })();
 
