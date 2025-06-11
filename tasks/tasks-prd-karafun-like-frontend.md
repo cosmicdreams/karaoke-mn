@@ -37,6 +37,10 @@
   - [x] **4.1** Implement add, reorder, skip and complete actions in `kj-control-panel`.
   - [x] **4.2** Use `fairPlay.js` to order songs returned from `/queue`.
   - [ ] **4.3** Write Vitest unit tests covering queue logic and KJ endpoints.
+  - [ ] **4.4** Test `kj-login` to ensure the Register and Login buttons invoke
+        passkey APIs successfully.
+  - [ ] **4.5** Serve the KJ dashboard at `/admin` when authenticated.
+  - [ ] **4.6** Print the `/admin/<uuid>` link to the console on server start.
 - [ ] **5.0** Design the main screen showing upcoming singers and content
   - [ ] **5.1** Display at least the next five singers in `main-queue-display`.
   - [ ] **5.2** Load session content from Firestore and Drupal when available.
