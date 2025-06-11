@@ -29,10 +29,10 @@ export class KJSessionCreator extends LitElement {
       <div>
         ${this.session
           ? html`
-              <p>Room Code: ${this.session.code}</p>
+              <p aria-live="polite">Room Code: ${this.session.code}</p>
               <img src="${this.session.qrCode}" alt="QR Code" />
             `
-          : html`<button @click=${this._create}>Start Session</button>`}
+          : html`<button @click=${this._create} aria-label="Start a new karaoke session">Start Session</button>`}
       </div>
     `;
   }
