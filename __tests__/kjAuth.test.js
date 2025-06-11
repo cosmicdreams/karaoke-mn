@@ -26,11 +26,13 @@ describe('kjAuth', () => {
 
   test('registration and auth flow', async () => {
     const regOpts = await generateRegistration();
-    await verifyRegistration({});
+    const regCred = { rawId: 'test' };
+    await verifyRegistration(regCred);
 
     expect(server.generateRegistrationOptions).toHaveBeenCalled();
     expect(server.verifyRegistrationResponse).toHaveBeenCalledWith(expect.objectContaining({
       expectedChallenge: regOpts.challenge,
+      response: regCred,
     }));
 
     const authOpts = await generateAuth();
@@ -38,10 +40,12 @@ describe('kjAuth', () => {
       allowCredentials: [expect.objectContaining({ id: expect.any(Buffer) })],
     }));
     const rawId = server.generateAuthenticationOptions.mock.calls[0][0].allowCredentials[0].id.toString('base64url');
-    await verifyAuth({ rawId });
+    const authCred = { rawId };
+    await verifyAuth(authCred);
 
     expect(server.verifyAuthenticationResponse).toHaveBeenCalledWith(expect.objectContaining({
       expectedChallenge: authOpts.challenge,
+      response: authCred,
       authenticator: expect.any(Object),
     }));
   });

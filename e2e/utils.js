@@ -1,7 +1,11 @@
-import { spawn } from 'child_process';
+import { spawn, spawnSync } from 'child_process';
 import { randomUUID } from 'crypto';
+import { existsSync } from 'fs';
 
 export function startServer() {
+  if (!existsSync('public/dist/index.html')) {
+    spawnSync('npm', ['run', 'build'], { stdio: 'inherit' });
+  }
   const adminId = randomUUID();
   const server = spawn('node', ['server.js'], {
     env: { ...process.env, YOUTUBE_API_KEY: 'test', ADMIN_UUID: adminId },

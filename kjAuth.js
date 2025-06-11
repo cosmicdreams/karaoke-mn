@@ -50,7 +50,7 @@ export async function generateRegistration() {
 export async function verifyRegistration(credential) {
   const user = getUser();
   const verification = await verifyRegistrationResponse({
-    credential,
+    response: credential,
     expectedChallenge: user.currentChallenge,
     expectedOrigin: origin,
     expectedRPID: rpID,
@@ -78,7 +78,7 @@ export async function verifyAuth(credential) {
   const user = getUser();
   const device = getUserDevice(credential.rawId);
   const verification = await verifyAuthenticationResponse({
-    credential,
+    response: credential,
     expectedChallenge: user.currentChallenge,
     expectedOrigin: origin,
     expectedRPID: rpID,
