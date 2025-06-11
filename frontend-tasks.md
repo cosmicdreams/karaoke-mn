@@ -44,7 +44,7 @@ Each item is independent so multiple Codex sessions can work in parallel.
 
 - [x] Audit all components for keyboard navigation and screen reader support.
 - [x] Add ARIA labels and roles to custom components where appropriate.
-- [ ] Ensure color contrast and font sizes meet accessibility standards.
+- [x] Ensure color contrast and font sizes meet accessibility standards.
 
 ## User Experience Enhancements
 
