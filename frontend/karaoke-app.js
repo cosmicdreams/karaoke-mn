@@ -1,6 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import './kj-login.js';
 import './kj-dashboard.js';
+import './guest-join-session.js';
 
 class KJView extends LitElement {
   static properties = {
@@ -26,7 +27,7 @@ customElements.define('kj-view', KJView);
 
 class GuestView extends LitElement {
   render() {
-    return html`<div>Guest View</div>`;
+    return html`<guest-join-session></guest-join-session>`;
   }
 }
 customElements.define('guest-view', GuestView);

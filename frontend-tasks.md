@@ -22,7 +22,7 @@ Each item is independent so multiple Codex sessions can work in parallel.
 
 ## Guest Components
 
-- [ ] Create `guest-join-session` for entering room code and singer name.
+- [x] Create `guest-join-session` for entering room code and singer name.
 - [ ] Implement `guest-song-search` with `search-bar`, `search-results-list` and `search-result-item` subcomponents.
 - [ ] Build `guest-queue-view` showing a guest their queued songs.
 
