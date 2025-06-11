@@ -21,8 +21,14 @@ function getUser() {
   return kjUser;
 }
 
+function b64UrlToBuffer(b64url) {
+  const pad = '='.repeat((4 - (b64url.length % 4)) % 4);
+  const base64 = (b64url + pad).replace(/-/g, '+').replace(/_/g, '/');
+  return Buffer.from(base64, 'base64');
+}
+
 function getUserDevice(rawId) {
-  const idBuffer = Buffer.from(rawId, 'base64url');
+  const idBuffer = b64UrlToBuffer(rawId);
   return kjUser.devices.find((dev) => dev.credentialID.equals(idBuffer));
 }
 
