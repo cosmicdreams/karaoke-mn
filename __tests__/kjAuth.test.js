@@ -25,7 +25,7 @@ describe('kjAuth', () => {
   });
 
   test('registration and auth flow', async () => {
-    const regOpts = generateRegistration();
+    const regOpts = await generateRegistration();
     await verifyRegistration({});
 
     expect(server.generateRegistrationOptions).toHaveBeenCalled();
@@ -33,7 +33,7 @@ describe('kjAuth', () => {
       expectedChallenge: regOpts.challenge,
     }));
 
-    const authOpts = generateAuth();
+    const authOpts = await generateAuth();
     expect(server.generateAuthenticationOptions).toHaveBeenCalledWith(expect.objectContaining({
       allowCredentials: [expect.objectContaining({ id: expect.any(Buffer) })],
     }));
