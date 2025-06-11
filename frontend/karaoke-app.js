@@ -1,8 +1,25 @@
 import { LitElement, html, css } from 'lit';
+import './kj-login.js';
+import './kj-dashboard.js';
 
 class KJView extends LitElement {
+  static properties = {
+    loggedIn: { state: true },
+  };
+
+  constructor() {
+    super();
+    this.loggedIn = false;
+  }
+
+  _onLogin() {
+    this.loggedIn = true;
+  }
+
   render() {
-    return html`<div>KJ View</div>`;
+    return this.loggedIn
+      ? html`<kj-dashboard></kj-dashboard>`
+      : html`<kj-login @login=${this._onLogin}></kj-login>`;
   }
 }
 customElements.define('kj-view', KJView);
