@@ -39,4 +39,4 @@ function getFairQueue(queue, singerStats = {}, phase2 = false) {
   return result;
 }
 
-module.exports = { getFairQueue };
+export { getFairQueue };

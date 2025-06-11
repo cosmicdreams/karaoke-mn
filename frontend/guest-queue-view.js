@@ -39,8 +39,8 @@ export class GuestQueueView extends LitElement {
   render() {
     return html`
       <h3>Your Songs</h3>
-      <ul>
-        ${this.queue.map((q) => html`<li>${q.videoId}</li>`)}
+      <ul aria-label="Your queued songs">
+        ${this.queue.map((q) => html`<li>Song ID: ${q.videoId}</li>`)}
       </ul>
     `;
   }

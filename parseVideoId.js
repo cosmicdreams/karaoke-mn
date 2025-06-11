@@ -10,4 +10,4 @@ function parseVideoId(input) {
   return null;
 }
 
-module.exports = { parseVideoId };
+export { parseVideoId };

@@ -1,4 +1,5 @@
-const admin = require('firebase-admin');
+import admin from 'firebase-admin';
+import fs from 'fs';
 
 function getFirestore() {
   if (admin.apps.length === 0) {
@@ -14,7 +15,8 @@ function getFirestore() {
 
     const options = {};
     if (credentialPath) {
-      options.credential = admin.credential.cert(require(credentialPath));
+      const creds = JSON.parse(fs.readFileSync(credentialPath, 'utf8'));
+      options.credential = admin.credential.cert(creds);
     }
     if (projectId) {
       options.projectId = projectId;
@@ -30,4 +32,4 @@ function getFirestore() {
   return admin.firestore();
 }
 
-module.exports = { getFirestore };
+export { getFirestore };

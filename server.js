@@ -1,23 +1,32 @@
-require('dotenv').config();
-const express = require('express');
-const bodyParser = require('body-parser');
-const { google } = require('googleapis');
-const { getFirestore } = require('./firebase');
-const { v4: uuidv4, validate: uuidValidate } = require('uuid');
-const QRCode = require('qrcode');
-const { parseVideoId } = require('./parseVideoId');
-const { getFairQueue } = require('./fairPlay');
-const {
+import dotenv from 'dotenv';
+dotenv.config();
+import express from 'express';
+import bodyParser from 'body-parser';
+import { google } from 'googleapis';
+import { getFirestore } from './firebase.js';
+import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
+import QRCode from 'qrcode';
+import { parseVideoId } from './parseVideoId.js';
+import { getFairQueue } from './fairPlay.js';
+import {
   generateRegistration,
   verifyRegistration,
   generateAuth,
   verifyAuth,
-} = require('./kjAuth');
-const path = require('path');
+} from './kjAuth.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(bodyParser.json());
-app.use(express.static('public'));
+
+// Serve static files for the Lit UI first
+app.use(express.static(path.join(__dirname, 'public', 'dist')));
+// Serve legacy/admin static files
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/auth/register/options', (req, res) => {
   const opts = generateRegistration();
@@ -53,7 +62,17 @@ if (!apiKey) {
   process.exit(1);
 }
 const youtube = google.youtube({ version: 'v3', auth: apiKey });
-const db = getFirestore();
+let db;
+
+(async () => {
+  db = await getFirestore();
+
+  const port = process.env.PORT || 3000;
+  if (import.meta.url === `file://${process.argv[1]}`) {
+    app.listen(port, () => console.log(`Server running on port ${port}`));
+  }
+})();
+
 let queue = [];
 let sessions = {};
 let singers = {};
@@ -355,15 +374,14 @@ app.get('/queue', (req, res) => {
   res.json({ paused, queue: ordered });
 });
 
-// Serve the Lit app from the Vite build output for all non-API routes
-app.get(/^\/(?!api|auth|sessions|songs|search|preview|queue|phase2|public).*/, (req, res) => {
+// Admin UI route
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'kj.html'));
+});
+
+// Serve the Lit app from the Vite build output for all non-API, non-admin routes
+app.get(/^\/(?!api|auth|sessions|songs|search|preview|queue|phase2|public|dist|assets|admin).*/, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'dist', 'index.html'));
 });
 
-const port = process.env.PORT || 3000;
-
-if (require.main === module) {
-  app.listen(port, () => console.log(`Server running on port ${port}`));
-} else {
-  module.exports = app;
-}
+export default app;

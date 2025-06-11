@@ -49,7 +49,7 @@ Each item is independent so multiple Codex sessions can work in parallel.
 ## User Experience Enhancements
 
 - [ ] Implement a settings/profile screen for KJ and guests (theme, preferences, etc.).
-- [ ] Add onboarding/tutorial flow for first-time users (skippable, highlights main features).
+- [x] Add onboarding/tutorial flow for first-time users (skippable, highlights main features).
 - [ ] Add analytics/stats display (e.g., most popular songs, top singers, session summary).
 - [ ] Implement error/offline handling screens and banners for network or backend issues.
 

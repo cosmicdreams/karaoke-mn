@@ -1,9 +1,9 @@
-const {
+import {
   generateRegistrationOptions,
   verifyRegistrationResponse,
   generateAuthenticationOptions,
   verifyAuthenticationResponse,
-} = require('@simplewebauthn/server');
+} from '@simplewebauthn/server';
 
 const rpID = process.env.RP_ID || 'localhost';
 const origin = process.env.ORIGIN || `http://${rpID}:3000`;
@@ -25,7 +25,7 @@ function getUserDevice(rawId) {
   return kjUser.devices.find((dev) => dev.credentialID.equals(idBuffer));
 }
 
-function generateRegistration() {
+export function generateRegistration() {
   const user = getUser();
   const opts = generateRegistrationOptions({
     rpName,
@@ -40,7 +40,7 @@ function generateRegistration() {
   return opts;
 }
 
-async function verifyRegistration(credential) {
+export async function verifyRegistration(credential) {
   const user = getUser();
   const verification = await verifyRegistrationResponse({
     credential,
@@ -56,7 +56,7 @@ async function verifyRegistration(credential) {
   return verification.verified;
 }
 
-function generateAuth() {
+export function generateAuth() {
   const user = getUser();
   const opts = generateAuthenticationOptions({
     rpID,
@@ -67,7 +67,7 @@ function generateAuth() {
   return opts;
 }
 
-async function verifyAuth(credential) {
+export async function verifyAuth(credential) {
   const user = getUser();
   const device = getUserDevice(credential.rawId);
   const verification = await verifyAuthenticationResponse({
@@ -82,5 +82,3 @@ async function verifyAuth(credential) {
   }
   return verification.verified;
 }
-
-module.exports = { generateRegistration, verifyRegistration, generateAuth, verifyAuth };
