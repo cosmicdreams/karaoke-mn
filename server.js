@@ -374,9 +374,13 @@ app.get('/queue', (req, res) => {
   res.json({ paused, queue: ordered });
 });
 
-// Admin UI route
+// Admin UI routes served by the Lit app
+app.get('/admin/:id', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'dist', 'index.html'));
+});
+
 app.get('/admin', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'kj.html'));
+  res.sendFile(path.join(__dirname, 'public', 'dist', 'index.html'));
 });
 
 // Serve the Lit app from the Vite build output for all non-API, non-admin routes
