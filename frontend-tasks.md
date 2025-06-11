@@ -12,6 +12,7 @@ Each item is independent so multiple Codex sessions can work in parallel.
 ## Core App Structure
 
 - [x] Implement the `karaoke-app` root component with basic routing for KJ, Guest and Main views.
+- [x] Ensure the Lit-based UI is built and served at the root (localhost:3000) as the main user-facing frontend. Verify that the Vite build output (public/dist) is used and the Express server serves the correct index.html for the Lit app.
 
 ## KJ Components
 
