@@ -37,7 +37,7 @@ Each item is independent so multiple Codex sessions can work in parallel.
 ## Quality & Developer Experience
 
 - [x] Integrate Storybook for isolated component development and visual testing (use Storybook 9's built-in tests for component testing).
-- [ ] Add end-to-end tests for critical user flows using Playwright.
+- [x] Add end-to-end tests for critical user flows using Playwright.
 
 ## Accessibility
 
