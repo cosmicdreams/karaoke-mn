@@ -47,8 +47,8 @@ export class SearchResultItem extends LitElement {
       <li>
         <span>${this.result.title}</span>
         <span>
-          <button @click=${this._add}>Add</button>
-          <button @click=${this._save}>Save</button>
+          <button @click=${this._add} aria-label="Add song: ${this.result.title}">Add</button>
+          <button @click=${this._save} aria-label="Save song: ${this.result.title}">Save</button>
         </span>
       </li>
     `;
