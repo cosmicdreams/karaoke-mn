@@ -1,5 +1,6 @@
 import { spawn } from 'child_process';
 import net from 'net';
+import { v4 as uuidv4 } from 'uuid';
 
 async function checkPortInUse(port) {
   return new Promise((resolve) => {
@@ -12,23 +13,27 @@ async function checkPortInUse(port) {
   });
 }
 
-async function openBrowser(port = 3000) {
+async function openBrowser(port = 3000, adminId) {
   const open = (await import('open')).default;
-  await open(`http://localhost:${port}/`);
+  await open(`http://localhost:${port}/admin/${adminId}`);
 }
 
 async function startApp() {
   const port = 3000;
+  const adminId = uuidv4();
   const isPortInUse = await checkPortInUse(port);
-  
+
   if (isPortInUse) {
     console.log(`Server already running on port ${port}`);
     console.log('Opening browser to existing instance...');
-    await openBrowser(port);
+    await openBrowser(port, adminId);
     return;
   }
 
-  const server = spawn('node', ['server.js'], { stdio: ['inherit', 'pipe', 'inherit'] });
+  const server = spawn('node', ['server.js'], {
+    stdio: ['inherit', 'pipe', 'inherit'],
+    env: { ...process.env, ADMIN_UUID: adminId },
+  });
 
   server.stdout.on('data', async (data) => {
     const msg = data.toString();
@@ -36,7 +41,9 @@ async function startApp() {
     if (msg.includes('Server running on port')) {
       const portMatch = msg.match(/port (\d+)/);
       const detectedPort = portMatch ? portMatch[1] : '3000';
-      await openBrowser(detectedPort);
+      const link = `http://localhost:${detectedPort}/admin/${adminId}`;
+      console.log(`KJ registration link: ${link}`);
+      await openBrowser(detectedPort, adminId);
     }
   });
 
