@@ -13,6 +13,7 @@ const {
   generateAuth,
   verifyAuth,
 } = require('./kjAuth');
+const path = require('path');
 
 const app = express();
 app.use(bodyParser.json());
@@ -352,6 +353,11 @@ function inPhase2() {
 app.get('/queue', (req, res) => {
   const ordered = getFairQueue(queue, singerStats, inPhase2());
   res.json({ paused, queue: ordered });
+});
+
+// Serve the Lit app from the Vite build output for all non-API routes
+app.get(/^\/(?!api|auth|sessions|songs|search|preview|queue|phase2|public).*/, (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'dist', 'index.html'));
 });
 
 const port = process.env.PORT || 3000;
