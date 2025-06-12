@@ -1,5 +1,7 @@
-import importPlugin from 'eslint-plugin-import';
-import storybook from 'eslint-plugin-storybook';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const importPlugin = require('eslint-plugin-import');
+const storybook = require('eslint-plugin-storybook');
 
 export default [
   {
