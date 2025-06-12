@@ -15,13 +15,28 @@ export class MainQueueDisplay extends LitElement {
       list-style: none;
       padding: 0;
     }
+    li {
+      margin: 0.25rem 0;
+      font-size: 1.2rem;
+    }
+    em {
+      color: #666;
+    }
   `;
 
   render() {
+    const displayCount = 5;
+    const items = this.queue.slice(0, displayCount);
+    while (items.length < displayCount) items.push(null);
     return html`
       <ul aria-label="Upcoming singers queue">
-        ${this.queue.map((q) =>
-          html`<li>Singer: ${q.singer}, Song ID: ${q.videoId}</li>`
+        ${items.map(
+          (q, i) => html`<li>
+            <strong>${i + 1}.</strong>
+            ${q
+              ? html`${q.singer}`
+              : html`<em>Waiting for singer...</em>`}
+          </li>`,
         )}
       </ul>
     `;
