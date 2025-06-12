@@ -520,6 +520,132 @@ app.post('/phase2', (req, res) => {
   res.json({ phase2Start });
 });
 
+const api = express.Router();
+
+api.get('/session', async (req, res) => {
+  if (!currentSession) return res.status(404).json({ error: 'No session' });
+  const joinLink = `${originBase}/?code=${encodeURIComponent(currentSession.code)}`;
+  const qrCode = await QRCode.toDataURL(joinLink);
+  const ordered = getFairQueue(queue, singerStats, inPhase2());
+  res.json({
+    id: currentSession.id,
+    code: currentSession.code,
+    qrCode,
+    paused,
+    queue: ordered,
+  });
+});
+
+api.post('/sessions', async (req, res) => {
+  try {
+    const session = await createSession();
+    const joinLink = `${originBase}/?code=${encodeURIComponent(session.code)}`;
+    const qrCode = await QRCode.toDataURL(joinLink);
+    res.json({ id: session.id, code: session.code, qrCode });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+api.post('/pause', (req, res) => {
+  paused = !!req.body.paused;
+  res.json({ paused });
+});
+
+api.post('/phase2', (req, res) => {
+  const { startTime } = req.body;
+  phase2Start = startTime ? new Date(startTime).getTime() : Date.now();
+  res.json({ phase2Start });
+});
+
+api.get('/queue', (req, res) => {
+  const ordered = getFairQueue(queue, singerStats, inPhase2());
+  res.json({ paused, queue: ordered });
+});
+
+api.post('/songs', async (req, res) => {
+  const { url, videoId, singer } = req.body;
+  const id = parseVideoId(videoId || url);
+  if (!id || !singer)
+    return res.status(400).json({ error: 'Missing videoId or singer' });
+  try {
+    const song = addSong(id, singer);
+    res.json(song);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+api.post('/songs/:id/error', (req, res) => {
+  const { id } = req.params;
+  const { error } = req.body;
+  const song = queue.find((s) => s.id === id);
+  if (!song) return res.status(404).json({ error: 'Song not found' });
+  song.error = error || 'unknown';
+  if (db) {
+    db.collection('songs')
+      .doc(id)
+      .update({ error: song.error })
+      .catch((e) => console.error('Firestore update error:', e));
+  }
+  res.json({ success: true });
+});
+
+api.post('/songs/:id/complete', async (req, res) => {
+  const { id } = req.params;
+  try {
+    await completeSong(id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(404).json({ error: err.message });
+  }
+});
+
+api.delete('/songs/:id', (req, res) => {
+  const { id } = req.params;
+  try {
+    removeSong(id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(404).json({ error: err.message });
+  }
+});
+
+api.put('/songs/:id', (req, res) => {
+  const { id } = req.params;
+  const vid = parseVideoId(req.body.videoId || req.body.url);
+  if (!vid)
+    return res.status(400).json({ error: 'Invalid or missing videoId' });
+  try {
+    replaceSong(id, vid);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(404).json({ error: err.message });
+  }
+});
+
+api.post('/songs/reorder', (req, res) => {
+  const { order } = req.body;
+  try {
+    reorderSongs(order);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+api.post('/songs/:id/skip', (req, res) => {
+  const { id } = req.params;
+  try {
+    skipSong(id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(404).json({ error: err.message });
+  }
+});
+
+app.use('/api', api);
+
 app.get('/singers/:deviceId', async (req, res) => {
   const { deviceId } = req.params;
   try {
