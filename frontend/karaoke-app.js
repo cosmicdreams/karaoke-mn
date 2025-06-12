@@ -16,7 +16,7 @@ class KJView extends LitElement {
 
   constructor() {
     super();
-    this.loggedIn = localStorage.getItem('kjLoggedIn') === 'true';
+    this.loggedIn = null; // login state unknown until checked
   }
 
   connectedCallback() {
@@ -31,7 +31,10 @@ class KJView extends LitElement {
           localStorage.removeItem('kjLoggedIn');
         }
       })
-      .catch((err) => console.error('login state check failed', err));
+      .catch((err) => {
+        console.error('login state check failed', err);
+        this.loggedIn = false;
+      });
   }
 
   _onLogin() {
@@ -40,6 +43,9 @@ class KJView extends LitElement {
   }
 
   render() {
+    if (this.loggedIn === null) {
+      return html`<p>Checking login...</p>`;
+    }
     return this.loggedIn
       ? html`<kj-dashboard></kj-dashboard>`
       : html`<kj-login @login=${this._onLogin}></kj-login>`;
