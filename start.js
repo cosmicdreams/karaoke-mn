@@ -41,8 +41,6 @@ async function startApp() {
     if (msg.includes('Server running on port')) {
       const portMatch = msg.match(/port (\d+)/);
       const detectedPort = portMatch ? portMatch[1] : '3000';
-      const link = `http://localhost:${detectedPort}/admin/${adminId}`;
-      //console.log(`KJ registration link: ${link}`);
       await openBrowser(detectedPort, adminId);
     }
   });
