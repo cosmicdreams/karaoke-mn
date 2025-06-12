@@ -13,7 +13,8 @@ const mockDb = {
   collection: vi.fn(() => ({
     doc: vi.fn(() => ({
       set: vi.fn(),
-      collection: vi.fn(() => ({ get: singersGet }))
+      get: vi.fn(() => Promise.resolve({ exists: false })),
+      collection: vi.fn(() => ({ get: singersGet })),
     })),
     orderBy: vi.fn(() => ({
       limit: vi.fn(() => ({

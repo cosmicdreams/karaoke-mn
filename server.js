@@ -13,6 +13,7 @@ import {
   verifyRegistration,
   generateAuth,
   verifyAuth,
+  initAuth,
 } from './kjAuth.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -76,6 +77,7 @@ let db;
 
 (async () => {
   db = await getFirestore();
+  await initAuth(db);
   await restoreLatestSession();
 
   const port = process.env.PORT || 3000;
