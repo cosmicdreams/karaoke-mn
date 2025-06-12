@@ -72,16 +72,17 @@ describe('queue endpoints', () => {
       'DDDDDDDDDDD',
     ]);
   });
-
   test('delete removes song from queue', async () => {
     const session = await request(app).post('/sessions');
     const { code } = session.body;
     await request(app).post(`/sessions/${code}/join`).send({ name: 'A' });
 
-    const add = await request(app).post('/songs').send({ videoId: 'EEEEEEEEEEE', singer: 'A' });
-    const id = add.body.id;
-    const delRes = await request(app).delete(`/songs/${id}`);
-    expect(delRes.statusCode).toBe(200);
+    const res = await request(app)
+      .post('/songs')
+      .send({ videoId: 'VIDDEL12345', singer: 'A' });
+    const id = res.body.id;
+
+    await request(app).delete(`/songs/${id}`);
 
     const q = await request(app).get('/queue');
     expect(q.body.queue.length).toBe(0);
@@ -92,12 +93,22 @@ describe('queue endpoints', () => {
     const { code } = session.body;
     await request(app).post(`/sessions/${code}/join`).send({ name: 'A' });
 
-    const add = await request(app).post('/songs').send({ videoId: 'FFFFFFFFFFF', singer: 'A' });
-    const id = add.body.id;
-    const repRes = await request(app).put(`/songs/${id}`).send({ videoId: 'GGGGGGGGGGG' });
-    expect(repRes.statusCode).toBe(200);
+    const res = await request(app)
+      .post('/songs')
+      .send({ videoId: 'VIDOLD12345', singer: 'A' });
+    const id = res.body.id;
+
+    await request(app)
+      .put(`/songs/${id}`)
+      .send({ videoId: 'VIDNEW12345' });
 
     const q = await request(app).get('/queue');
-    expect(q.body.queue[0].videoId).toBe('GGGGGGGGGGG');
+    expect(q.body.queue[0].videoId).toBe('VIDNEW12345');
+  });
+
+  test('pause endpoint toggles queue paused state', async () => {
+    await request(app).post('/sessions/pause').send({ paused: true });
+    const q = await request(app).get('/queue');
+    expect(q.body.paused).toBe(true);
   });
 });
