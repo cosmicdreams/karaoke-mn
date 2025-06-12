@@ -92,6 +92,7 @@ let sessions = {};
 let currentSession = null;
 let singers = {};
 let singerStats = {};
+let singerProfiles = {};
 let phase2Start = null;
 let paused = false;
 
@@ -101,6 +102,23 @@ async function saveSessionState() {
     .collection('sessions')
     .doc(currentSession.id)
     .set({ queue, singerStats }, { merge: true });
+}
+
+async function loadSingerProfile(deviceId) {
+  if (singerProfiles[deviceId]) return singerProfiles[deviceId];
+  if (!db) return null;
+  const doc = await db.collection('singerProfiles').doc(deviceId).get();
+  if (!doc.exists) return null;
+  const profile = { id: deviceId, ...doc.data() };
+  singerProfiles[deviceId] = profile;
+  return profile;
+}
+
+async function saveSingerProfile(profile) {
+  singerProfiles[profile.id] = profile;
+  if (db) {
+    await db.collection('singerProfiles').doc(profile.id).set(profile);
+  }
 }
 
 async function getVideoInfo(videoId) {
@@ -149,7 +167,7 @@ async function createSession() {
   return session;
 }
 
-function joinSession(code, name, deviceId) {
+async function joinSession(code, name, deviceId) {
   const session = Object.values(sessions).find((s) => s.code === code);
   if (!session) throw new Error('Invalid room code');
   if (!name) throw new Error('Missing singer name');
@@ -163,11 +181,27 @@ function joinSession(code, name, deviceId) {
     singer = { id: uuidv4(), name, deviceId };
     singers[session.id].push(singer);
     if (!singerStats[singer.name]) singerStats[singer.name] = { songsSung: 0 };
+    let profile =
+      (await loadSingerProfile(deviceId)) ||
+      {
+        id: deviceId,
+        name,
+        rating: 0,
+        history: [],
+        notes: '',
+      };
+    profile.name = name;
+    await saveSingerProfile(profile);
   } else {
     if (singer.name !== name) {
       throw new Error('Device already registered with a different name');
     }
     if (!singerStats[singer.name]) singerStats[singer.name] = { songsSung: 0 };
+    let profile = await loadSingerProfile(deviceId);
+    if (profile) {
+      profile.name = name;
+      await saveSingerProfile(profile);
+    }
   }
   if (db) {
     db.collection('sessions')
@@ -242,11 +276,11 @@ app.get('/sessions/current', async (req, res) => {
   });
 });
 
-app.post('/sessions/:code/join', (req, res) => {
+app.post('/sessions/:code/join', async (req, res) => {
   const { code } = req.params;
   const { name, deviceId } = req.body;
   try {
-    const result = joinSession(code, name, deviceId);
+    const result = await joinSession(code, name, deviceId);
     res.json(result);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -259,14 +293,22 @@ function addSong(videoId, singer) {
   // so the fair queue algorithm can favor new singers when necessary.
   // count variable is retained for potential metrics or future logic.
   if (!singerStats[singer]) singerStats[singer] = { songsSung: 0 };
-  const song = { id: uuidv4(), videoId, singer, addedAt: Date.now() };
+  const singerObj =
+    singers[currentSession?.id || '']?.find((s) => s.name === singer) || {};
+  const song = {
+    id: uuidv4(),
+    videoId,
+    singer,
+    deviceId: singerObj.deviceId,
+    addedAt: Date.now(),
+  };
   queue.push(song);
   if (db) db.collection('songs').doc(song.id).set(song);
   saveSessionState();
   return song;
 }
 
-function completeSong(id) {
+async function completeSong(id) {
   const idx = queue.findIndex((s) => s.id === id);
   if (idx === -1) throw new Error('Song not found');
   const [song] = queue.splice(idx, 1);
@@ -277,6 +319,16 @@ function completeSong(id) {
       .doc(id)
       .update({ completed: true })
       .catch((e) => console.error('Firestore update error:', e));
+  }
+  const profile =
+    song.deviceId && (await loadSingerProfile(song.deviceId));
+  if (profile) {
+    profile.history.push({
+      sessionId: currentSession?.id,
+      videoId: song.videoId,
+      completedAt: Date.now(),
+    });
+    await saveSingerProfile(profile);
   }
   saveSessionState();
   return song;
@@ -404,10 +456,10 @@ app.post('/songs/:id/error', (req, res) => {
   res.json({ success: true });
 });
 
-app.post('/songs/:id/complete', (req, res) => {
+app.post('/songs/:id/complete', async (req, res) => {
   const { id } = req.params;
   try {
-    completeSong(id);
+    await completeSong(id);
     res.json({ success: true });
   } catch (err) {
     res.status(404).json({ error: err.message });
@@ -466,6 +518,39 @@ app.post('/phase2', (req, res) => {
   const { startTime } = req.body;
   phase2Start = startTime ? new Date(startTime).getTime() : Date.now();
   res.json({ phase2Start });
+});
+
+app.get('/singers/:deviceId', async (req, res) => {
+  const { deviceId } = req.params;
+  try {
+    const profile =
+      singerProfiles[deviceId] || (await loadSingerProfile(deviceId));
+    if (!profile) return res.status(404).json({ error: 'Singer not found' });
+    res.json(profile);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put('/singers/:deviceId', async (req, res) => {
+  const { deviceId } = req.params;
+  try {
+    let profile =
+      singerProfiles[deviceId] ||
+      (await loadSingerProfile(deviceId)) || {
+        id: deviceId,
+        name: '',
+        rating: 0,
+        history: [],
+        notes: '',
+      };
+    if (req.body.rating !== undefined) profile.rating = req.body.rating;
+    if (req.body.notes !== undefined) profile.notes = req.body.notes;
+    await saveSingerProfile(profile);
+    res.json(profile);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 function inPhase2() {
