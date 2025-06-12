@@ -57,7 +57,7 @@
   - [x] **7.4** Expose endpoints for alternate admin UIs to manage the queue and session
   - [ ] **7.5** Implement server‑side session cookies so the KJ remains logged in
   - [ ] **7.6** Persist passkey device registrations in Firestore
-  - [ ] **7.7** Provide `/auth/session` and `/auth/logout` endpoints
+  - [x] **7.7** Provide `/auth/session` and `/auth/logout` endpoints
   - [ ] **7.8** Check login state on app startup and update the UI accordingly
   - [ ] **7.9** Add Vitest unit tests and Playwright E2E tests for session persistence
   - [ ] **7.10** Persist and restore session flags like `paused` and `phase2Start`
