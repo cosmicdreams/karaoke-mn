@@ -43,7 +43,7 @@
   - [x] **4.6** Print the `/admin/<uuid>` link to the console on server start.
 - [ ] **5.0** Design the main screen showing upcoming singers and content
 - [x] **5.1** Display at least the next five singers in `main-queue-display`.
-  - [ ] **5.2** Load session content from Firestore and Drupal when available.
+  - [x] **5.2** Load session content from Firestore and Drupal when available.
   - [ ] **5.3** Ensure layouts are responsive across phones, tablets and desktops.
 - [ ] **6.0** Switch the repository to Vitest for all testing
   - [ ] **6.1** Remove Jest dependencies and config files.
