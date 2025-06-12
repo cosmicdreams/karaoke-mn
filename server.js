@@ -14,6 +14,7 @@ import {
   generateAuth,
   verifyAuth,
 } from './kjAuth.js';
+import cookie from 'cookie';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -29,10 +30,8 @@ const app = express();
 app.use(bodyParser.json());
 
 function isLoggedIn(req) {
-  return (
-    req.headers.cookie?.split(';').some((c) => c.trim().startsWith('kjSession=1')) ||
-    false
-  );
+  const cookies = cookie.parse(req.headers.cookie || '');
+  return cookies.kjSession === '1';
 }
 
 // Serve static files for the Lit UI first
