@@ -49,3 +49,14 @@
   - [ ] **6.1** Remove Jest dependencies and config files.
   - [ ] **6.2** Update documentation and tasks to reference Vitest.
   - [ ] **6.3** Confirm all existing tests pass with `npm test`.
+
+- [ ] **7.0** Session & Login Persistence
+  - [ ] **7.1** Persist active session data (queue, singers, stats) in Firestore so a restart can restore the current room
+  - [ ] **7.2** Restore the most recent session on server startup
+  - [ ] **7.3** Track singer profiles (rating, song history, notes) across sessions
+  - [ ] **7.4** Expose endpoints for alternate admin UIs to manage the queue and session
+  - [ ] **7.5** Implement server‑side session cookies so the KJ remains logged in
+  - [ ] **7.6** Persist passkey device registrations in Firestore
+  - [ ] **7.7** Provide `/auth/session` and `/auth/logout` endpoints
+  - [ ] **7.8** Check login state on app startup and update the UI accordingly
+  - [ ] **7.9** Add Vitest unit tests and Playwright E2E tests for session persistence
