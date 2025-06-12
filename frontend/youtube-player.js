@@ -1,5 +1,5 @@
 /* global YT */
-import { LitElement, html } from 'lit';
+import { LitElement, html, css } from 'lit';
 
 export class YouTubePlayer extends LitElement {
   static properties = {
@@ -17,8 +17,8 @@ export class YouTubePlayer extends LitElement {
     document.body.appendChild(script);
     window.onYouTubeIframeAPIReady = () => {
       this.player = new YT.Player(this.shadowRoot.getElementById('player'), {
-        height: '390',
-        width: '640',
+        height: '100%',
+        width: '100%',
         videoId: this.videoId,
       });
     };
@@ -29,6 +29,21 @@ export class YouTubePlayer extends LitElement {
       this.player.loadVideoById(this.videoId);
     }
   }
+
+  static styles = css`
+    :host {
+      display: block;
+      width: 100%;
+    }
+    #player {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+    }
+    #player iframe {
+      width: 100%;
+      height: 100%;
+    }
+  `;
 
   render() {
     return html` <div id="player"></div> `;

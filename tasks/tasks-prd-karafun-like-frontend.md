@@ -44,7 +44,7 @@
 - [ ] **5.0** Design the main screen showing upcoming singers and content
 - [x] **5.1** Display at least the next five singers in `main-queue-display`.
   - [x] **5.2** Load session content from Firestore and Drupal when available.
-  - [ ] **5.3** Ensure layouts are responsive across phones, tablets and desktops.
+  - [x] **5.3** Ensure layouts are responsive across phones, tablets and desktops.
 - [ ] **6.0** Switch the repository to Vitest for all testing
   - [ ] **6.1** Remove Jest dependencies and config files.
   - [ ] **6.2** Update documentation and tasks to reference Vitest.
