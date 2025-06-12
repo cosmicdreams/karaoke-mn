@@ -113,13 +113,27 @@ function generateRoomCode() {
   return `${w1}-${w2}`;
 }
 
-function createSession() {
+async function fetchPreparedContent() {
+  const url = process.env.DRUPAL_CONTENT_URL;
+  if (!url) return null;
+  try {
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error(`Drupal request failed: ${resp.status}`);
+    return await resp.json();
+  } catch (err) {
+    console.error('Error fetching Drupal content:', err);
+    return null;
+  }
+}
+
+async function createSession() {
   const id = uuidv4();
   const code = generateRoomCode();
-  const session = { id, code };
+  const preparedContent = await fetchPreparedContent();
+  const session = { id, code, preparedContent };
   sessions[id] = session;
   currentSession = session;
-  if (db) db.collection('sessions').doc(id).set(session);
+  if (db) await db.collection('sessions').doc(id).set(session);
   return session;
 }
 
@@ -159,7 +173,7 @@ function joinSession(code, name, deviceId) {
 
 app.post('/sessions', async (req, res) => {
   try {
-    const session = createSession();
+    const session = await createSession();
     const joinLink = `${originBase}/?code=${encodeURIComponent(session.code)}`;
     const qrCode = await QRCode.toDataURL(joinLink);
     res.json({ id: session.id, code: session.code, qrCode });
@@ -172,7 +186,12 @@ app.get('/sessions/current', async (req, res) => {
   if (!currentSession) return res.status(404).json({ error: 'No session' });
   const joinLink = `${originBase}/?code=${encodeURIComponent(currentSession.code)}`;
   const qrCode = await QRCode.toDataURL(joinLink);
-  res.json({ id: currentSession.id, code: currentSession.code, qrCode });
+  res.json({
+    id: currentSession.id,
+    code: currentSession.code,
+    qrCode,
+    preparedContent: currentSession.preparedContent || null,
+  });
 });
 
 app.post('/sessions/:code/join', (req, res) => {

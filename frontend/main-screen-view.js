@@ -10,6 +10,7 @@ export class MainScreenView extends LitElement {
     queue: { state: true },
     sessionCode: { state: true },
     qrCode: { state: true },
+    preparedContent: { state: true },
   };
 
   constructor() {
@@ -17,6 +18,7 @@ export class MainScreenView extends LitElement {
     this.queue = [];
     this.sessionCode = '';
     this.qrCode = '';
+    this.preparedContent = null;
   }
 
   connectedCallback() {
@@ -41,6 +43,7 @@ export class MainScreenView extends LitElement {
       const s = await sessionRes.json();
       this.sessionCode = s.code;
       this.qrCode = s.qrCode;
+      this.preparedContent = s.preparedContent || null;
     }
   }
 
@@ -48,6 +51,13 @@ export class MainScreenView extends LitElement {
     :host {
       display: block;
       text-align: center;
+    }
+    #prepared {
+      text-align: left;
+      margin: 1rem auto;
+      max-width: 600px;
+      background: #f5f5f5;
+      padding: 0.5rem;
     }
   `;
 
@@ -62,6 +72,13 @@ export class MainScreenView extends LitElement {
         .qrCode=${this.qrCode}
       ></session-info-display>
       <main-queue-display .queue=${this.queue.slice(1, 6)}></main-queue-display>
+      ${this.preparedContent
+        ? html`<pre id="prepared">${JSON.stringify(
+            this.preparedContent,
+            null,
+            2,
+          )}</pre>`
+        : ''}
       <interstitial-player id="interstitial"></interstitial-player>
       <on-screen-announcement id="announcement"></on-screen-announcement>
     `;
