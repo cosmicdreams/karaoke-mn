@@ -8,12 +8,18 @@ global.TextDecoder = TextDecoder;
 let app;
 
 const sessionData = { code: 'PURPLE-RAIN', preparedContent: { msg: 'hi' }, createdAt: Date.now() };
+const singersGet = vi.fn(() => Promise.resolve({ docs: [] }));
 const mockDb = {
   collection: vi.fn(() => ({
-    doc: vi.fn(() => ({ set: vi.fn() })),
+    doc: vi.fn(() => ({
+      set: vi.fn(),
+      collection: vi.fn(() => ({ get: singersGet }))
+    })),
     orderBy: vi.fn(() => ({
       limit: vi.fn(() => ({
-        get: vi.fn(() => Promise.resolve({ empty: false, docs: [{ id: 'abc', data: () => sessionData }] }))
+        get: vi.fn(() =>
+          Promise.resolve({ empty: false, docs: [{ id: 'abc', data: () => sessionData }] })
+        )
       }))
     }))
   }))

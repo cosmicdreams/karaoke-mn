@@ -76,6 +76,7 @@ let db;
 
 (async () => {
   db = await getFirestore();
+  await restoreLatestSession();
 
   const port = process.env.PORT || 3000;
   if (import.meta.url === `file://${process.argv[1]}`) {
@@ -204,6 +205,26 @@ async function loadLatestSession() {
   if (snap.empty) return null;
   const doc = snap.docs[0];
   return { id: doc.id, ...doc.data() };
+}
+
+async function restoreLatestSession() {
+  const session = await loadLatestSession();
+  if (!session) return null;
+  currentSession = session;
+  sessions[session.id] = session;
+  queue = session.queue || [];
+  singerStats = session.singerStats || {};
+  if (db) {
+    const snap = await db
+      .collection('sessions')
+      .doc(session.id)
+      .collection('singers')
+      .get();
+    singers[session.id] = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+  } else {
+    singers[session.id] = [];
+  }
+  return session;
 }
 
 app.get('/sessions/current', async (req, res) => {

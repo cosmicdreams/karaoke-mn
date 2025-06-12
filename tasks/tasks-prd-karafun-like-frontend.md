@@ -51,8 +51,8 @@
   - [x] **6.3** Confirm all existing tests pass with `npm test`.
 
 - [ ] **7.0** Session & Login Persistence
-  - [ ] **7.1** Persist active session data (queue, singers, stats) in Firestore so a restart can restore the current room
-  - [ ] **7.2** Restore the most recent session on server startup
+  - [x] **7.1** Persist active session data (queue, singers, stats) in Firestore so a restart can restore the current room
+  - [x] **7.2** Restore the most recent session on server startup
   - [ ] **7.3** Track singer profiles (rating, song history, notes) across sessions
   - [ ] **7.4** Expose endpoints for alternate admin UIs to manage the queue and session
   - [ ] **7.5** Implement server‑side session cookies so the KJ remains logged in
