@@ -60,4 +60,4 @@
   - [ ] **7.7** Provide `/auth/session` and `/auth/logout` endpoints
   - [ ] **7.8** Check login state on app startup and update the UI accordingly
   - [ ] **7.9** Add Vitest unit tests and Playwright E2E tests for session persistence
-  - [ ] **7.10** Persist and restore session flags like `paused` and `phase2Start`
+  - [x] **7.10** Persist and restore session flags like `paused` and `phase2Start`
