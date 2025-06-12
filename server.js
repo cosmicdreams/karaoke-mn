@@ -130,7 +130,7 @@ async function createSession() {
   const id = uuidv4();
   const code = generateRoomCode();
   const preparedContent = await fetchPreparedContent();
-  const session = { id, code, preparedContent };
+  const session = { id, code, preparedContent, createdAt: Date.now() };
   sessions[id] = session;
   currentSession = session;
   if (db) await db.collection('sessions').doc(id).set(session);
@@ -182,8 +182,23 @@ app.post('/sessions', async (req, res) => {
   }
 });
 
+async function loadLatestSession() {
+  if (!db) return null;
+  const snap = await db
+    .collection('sessions')
+    .orderBy('createdAt', 'desc')
+    .limit(1)
+    .get();
+  if (snap.empty) return null;
+  const doc = snap.docs[0];
+  return { id: doc.id, ...doc.data() };
+}
+
 app.get('/sessions/current', async (req, res) => {
-  if (!currentSession) return res.status(404).json({ error: 'No session' });
+  if (!currentSession) {
+    currentSession = await loadLatestSession();
+    if (!currentSession) return res.status(404).json({ error: 'No session' });
+  }
   const joinLink = `${originBase}/?code=${encodeURIComponent(currentSession.code)}`;
   const qrCode = await QRCode.toDataURL(joinLink);
   res.json({
