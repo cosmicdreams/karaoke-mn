@@ -16,11 +16,12 @@ class KJView extends LitElement {
 
   constructor() {
     super();
-    this.loggedIn = false;
+    this.loggedIn = localStorage.getItem('kjLoggedIn') === 'true';
   }
 
   _onLogin() {
     this.loggedIn = true;
+    localStorage.setItem('kjLoggedIn', 'true');
   }
 
   render() {

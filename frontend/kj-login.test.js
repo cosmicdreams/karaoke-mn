@@ -14,6 +14,7 @@ describe('kj-login component', () => {
     document.body.innerHTML = '';
     global.fetch = vi.fn();
     global.navigator = { credentials: { create: vi.fn(), get: vi.fn() } };
+    localStorage.clear();
     element = document.createElement('kj-login');
     document.body.appendChild(element);
     await element.updateComplete;

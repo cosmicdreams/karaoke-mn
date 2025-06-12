@@ -39,7 +39,7 @@
   - [x] **4.3** Write Vitest unit tests covering queue logic and KJ endpoints.
   - [x] **4.4** Test `kj-login` to ensure the Register and Login buttons invoke
         passkey APIs successfully.
-  - [ ] **4.5** Serve the KJ dashboard at `/admin` when authenticated.
+  - [x] **4.5** Serve the KJ dashboard at `/admin` when authenticated.
   - [x] **4.6** Print the `/admin/<uuid>` link to the console on server start.
 - [ ] **5.0** Design the main screen showing upcoming singers and content
   - [ ] **5.1** Display at least the next five singers in `main-queue-display`.

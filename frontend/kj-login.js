@@ -93,7 +93,7 @@ export class KJLogin extends LitElement {
 
   constructor() {
     super();
-    this.loggedIn = false;
+    this.loggedIn = localStorage.getItem('kjLoggedIn') === 'true';
   }
 
   async _register() {
@@ -118,6 +118,7 @@ export class KJLogin extends LitElement {
       if (res.verified) {
         console.log('Registration verified successfully');
         this.loggedIn = true;
+        localStorage.setItem('kjLoggedIn', 'true');
         this.dispatchEvent(
           new CustomEvent('login', { bubbles: true, composed: true }),
         );
@@ -144,6 +145,7 @@ export class KJLogin extends LitElement {
       }).then((r) => r.json());
       if (res.verified) {
         this.loggedIn = true;
+        localStorage.setItem('kjLoggedIn', 'true');
         this.dispatchEvent(
           new CustomEvent('login', { bubbles: true, composed: true }),
         );
