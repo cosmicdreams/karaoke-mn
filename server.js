@@ -14,6 +14,7 @@ import {
   verifyRegistration,
   generateAuth,
   verifyAuth,
+  initAuth,
 } from './kjAuth.js';
 import cookie from 'cookie';
 import path from 'path';
@@ -95,6 +96,7 @@ let db;
 
 (async () => {
   db = await getFirestore();
+  await initAuth(db);
   await restoreLatestSession();
 
   const port = process.env.PORT || 3000;

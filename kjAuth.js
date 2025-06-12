@@ -4,10 +4,13 @@ import {
   generateAuthenticationOptions,
   verifyAuthenticationResponse,
 } from '@simplewebauthn/server';
+import { getFirestore } from './firebase.js';
 
 const rpID = process.env.RP_ID || 'localhost';
 const origin = process.env.ORIGIN || `http://${rpID}:3000`;
 const rpName = 'Karaoke MN';
+
+let db = null;
 
 const kjUser = {
   // Use a binary ID per simplewebauthn requirements
@@ -33,6 +36,48 @@ function bufferToB64Url(buf) {
     .replace(/\+/g, '-')
     .replace(/\//g, '_')
     .replace(/=+$/, '');
+}
+
+function serializeDevice(dev) {
+  return {
+    credentialID: bufferToB64Url(dev.credentialID),
+    publicKey:
+      typeof dev.publicKey === 'string'
+        ? dev.publicKey
+        : bufferToB64Url(dev.publicKey),
+    counter: dev.counter,
+  };
+}
+
+function deserializeDevice(data) {
+  return {
+    credentialID: b64UrlToBuffer(data.credentialID),
+    publicKey: data.publicKey,
+    counter: data.counter,
+  };
+}
+
+async function loadDevices() {
+  if (!db) return;
+  const doc = await db.collection('passkeyDevices').doc('kj').get();
+  if (!doc.exists) return;
+  const data = doc.data();
+  if (data && Array.isArray(data.devices)) {
+    kjUser.devices = data.devices.map(deserializeDevice);
+  }
+}
+
+async function saveDevices() {
+  if (!db) return;
+  await db
+    .collection('passkeyDevices')
+    .doc('kj')
+    .set({ devices: kjUser.devices.map(serializeDevice) });
+}
+
+export async function initAuth(firestore = getFirestore()) {
+  db = firestore;
+  await loadDevices();
 }
 
 function getUserDevice(rawId) {
@@ -87,6 +132,7 @@ export async function verifyRegistration(credential) {
         counter,
       });
     }
+    await saveDevices();
   }
   return verification.verified;
 }
@@ -116,6 +162,7 @@ export async function verifyAuth(credential) {
   });
   if (verification.verified && verification.authenticationInfo && device) {
     device.counter = verification.authenticationInfo.newCounter;
+    await saveDevices();
   }
   return verification.verified;
 }
