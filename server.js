@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import express from 'express';
+import session from "express-session";
 import bodyParser from 'body-parser';
 import { google } from 'googleapis';
 import { getFirestore } from './firebase.js';
@@ -27,6 +28,8 @@ const adminId = process.env.ADMIN_UUID || uuidv4();
 process.env.ADMIN_UUID = adminId;
 
 const app = express();
+const sessionSecret = process.env.SESSION_SECRET || "kj-secret";
+app.use(session({ secret: sessionSecret, resave: false, saveUninitialized: false }));
 app.use(bodyParser.json());
 
 function isLoggedIn(req) {
@@ -48,6 +51,7 @@ app.post('/auth/register/verify', async (req, res) => {
   try {
     console.log('Registration verification request:', JSON.stringify(req.body, null, 2));
     const verified = await verifyRegistration(req.body);
+    if (verified) req.session.loggedIn = true;
     console.log('Registration verification result:', verified);
     if (verified) {
       res.cookie('kjSession', '1', { httpOnly: true });
@@ -68,9 +72,12 @@ app.post('/auth/login/verify', async (req, res) => {
   try {
     console.log('Login verification request:', JSON.stringify(req.body));
     const verified = await verifyAuth(req.body);
+
     if (verified) {
+      req.session.loggedIn = true;
       res.cookie('kjSession', '1', { httpOnly: true });
     }
+
     res.json({ verified });
   } catch (err) {
     console.error('Authentication verification error:', err.message);
