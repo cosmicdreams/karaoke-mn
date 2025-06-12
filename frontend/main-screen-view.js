@@ -4,6 +4,7 @@ import './main-queue-display.js';
 import './interstitial-player.js';
 import './on-screen-announcement.js';
 import './session-info-display.js';
+import './prepared-content-display.js';
 
 export class MainScreenView extends LitElement {
   static properties = {
@@ -52,13 +53,6 @@ export class MainScreenView extends LitElement {
       display: block;
       text-align: center;
     }
-    #prepared {
-      text-align: left;
-      margin: 1rem auto;
-      max-width: 600px;
-      background: #f5f5f5;
-      padding: 0.5rem;
-    }
   `;
 
   render() {
@@ -72,13 +66,9 @@ export class MainScreenView extends LitElement {
         .qrCode=${this.qrCode}
       ></session-info-display>
       <main-queue-display .queue=${this.queue.slice(1, 6)}></main-queue-display>
-      ${this.preparedContent
-        ? html`<pre id="prepared">${JSON.stringify(
-            this.preparedContent,
-            null,
-            2,
-          )}</pre>`
-        : ''}
+      <prepared-content-display
+        .content=${this.preparedContent}
+      ></prepared-content-display>
       <interstitial-player id="interstitial"></interstitial-player>
       <on-screen-announcement id="announcement"></on-screen-announcement>
     `;
