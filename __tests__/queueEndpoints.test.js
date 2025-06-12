@@ -50,6 +50,7 @@ describe('queue endpoints', () => {
     expect(q.body.queue.map((s) => s.id)).toEqual([res2.body.id, res1.body.id]);
   });
 
+
   test('queue favors new singers even when one adds many songs', async () => {
     const session = await request(app).post('/sessions');
     const { code } = session.body;
@@ -72,6 +73,7 @@ describe('queue endpoints', () => {
       'DDDDDDDDDDD',
     ]);
   });
+
   test('delete removes song from queue', async () => {
     const session = await request(app).post('/sessions');
     const { code } = session.body;
