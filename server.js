@@ -122,7 +122,7 @@ async function saveSessionState() {
   await db
     .collection('sessions')
     .doc(currentSession.id)
-    .set({ queue, singerStats }, { merge: true });
+    .set({ queue, singerStats, paused, phase2Start }, { merge: true });
 }
 
 async function loadSingerProfile(deviceId) {
@@ -269,6 +269,8 @@ async function restoreLatestSession() {
   sessions[session.id] = session;
   queue = session.queue || [];
   singerStats = session.singerStats || {};
+  paused = session.paused || false;
+  phase2Start = session.phase2Start || null;
   if (db) {
     const snap = await db
       .collection('sessions')
@@ -532,12 +534,14 @@ app.post('/songs/:id/skip', (req, res) => {
 
 app.post('/sessions/pause', (req, res) => {
   paused = !!req.body.paused;
+  saveSessionState();
   res.json({ paused });
 });
 
 app.post('/phase2', (req, res) => {
   const { startTime } = req.body;
   phase2Start = startTime ? new Date(startTime).getTime() : Date.now();
+  saveSessionState();
   res.json({ phase2Start });
 });
 
@@ -579,12 +583,14 @@ api.post('/sessions', async (req, res) => {
 
 api.post('/pause', (req, res) => {
   paused = !!req.body.paused;
+  saveSessionState();
   res.json({ paused });
 });
 
 api.post('/phase2', (req, res) => {
   const { startTime } = req.body;
   phase2Start = startTime ? new Date(startTime).getTime() : Date.now();
+  saveSessionState();
   res.json({ phase2Start });
 });
 
