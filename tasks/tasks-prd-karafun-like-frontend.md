@@ -33,7 +33,7 @@
   - [x] **3.1** Connect `guest-song-search` to the `/search` API and show results.
   - [x] **3.2** Use `search-results-list` and `search-result-item` to display YouTube songs.
   - [x] **3.3** Allow previewing songs with the `/preview` endpoint before queueing.
-- [ ] **4.0** Create the KJ dashboard with queue management using `fairPlay.js`
+- [x] **4.0** Create the KJ dashboard with queue management using `fairPlay.js`
   - [x] **4.1** Implement add, reorder, skip and complete actions in `kj-control-panel`.
   - [x] **4.2** Use `fairPlay.js` to order songs returned from `/queue`.
   - [x] **4.3** Write Vitest unit tests covering queue logic and KJ endpoints.
