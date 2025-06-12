@@ -52,23 +52,59 @@ export class MainScreenView extends LitElement {
     :host {
       display: block;
       text-align: center;
+      box-sizing: border-box;
+      padding: 0.5rem;
+    }
+
+    .layout {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .side {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    @media (min-width: 600px) {
+      .layout {
+        flex-direction: row;
+        align-items: flex-start;
+      }
+      .side {
+        width: 35%;
+        max-width: 400px;
+      }
+      youtube-player {
+        flex: 1;
+      }
     }
   `;
 
   render() {
     const current = this.queue[0];
     return html`
-      <youtube-player
-        .videoId=${current ? current.videoId : ''}
-      ></youtube-player>
-      <session-info-display
-        .code=${this.sessionCode}
-        .qrCode=${this.qrCode}
-      ></session-info-display>
-      <main-queue-display .queue=${this.queue.slice(1, 6)}></main-queue-display>
-      <prepared-content-display
-        .content=${this.preparedContent}
-      ></prepared-content-display>
+      <div class="layout">
+        <youtube-player
+          .videoId=${current ? current.videoId : ''}
+        ></youtube-player>
+        <div class="side">
+          <session-info-display
+            .code=${this.sessionCode}
+            .qrCode=${this.qrCode}
+          ></session-info-display>
+          <main-queue-display
+            .queue=${this.queue.slice(1, 6)}
+          ></main-queue-display>
+          <prepared-content-display
+            .content=${this.preparedContent}
+          ></prepared-content-display>
+        </div>
+      </div>
       <interstitial-player id="interstitial"></interstitial-player>
       <on-screen-announcement id="announcement"></on-screen-announcement>
     `;
