@@ -4,6 +4,7 @@ import { existsSync } from 'fs';
 
 export function startServer() {
   if (!existsSync('public/dist/index.html')) {
+    console.log('Building frontend for E2E tests...');
     spawnSync('npm', ['run', 'build'], { stdio: 'inherit' });
   }
   const adminId = randomUUID();

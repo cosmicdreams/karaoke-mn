@@ -27,6 +27,14 @@ function b64UrlToBuffer(b64url) {
   return Buffer.from(base64, 'base64');
 }
 
+function bufferToB64Url(buf) {
+  return buf
+    .toString('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+}
+
 function getUserDevice(rawId) {
   const idBuffer = b64UrlToBuffer(rawId);
   return kjUser.devices.find((dev) => dev.credentialID.equals(idBuffer));
@@ -40,8 +48,10 @@ export async function generateRegistration() {
     userID: user.id,
     userName: user.username,
     attestationType: 'none',
-    authenticatorSelection: { userVerification: 'preferred' },
-    excludeCredentials: user.devices.map((d) => ({ id: d.credentialID, type: 'public-key' })),
+    // Require user verification so registration succeeds in environments
+    // where verification is expected during `verifyRegistration`
+    authenticatorSelection: { userVerification: 'required' },
+    excludeCredentials: user.devices.map((d) => ({ id: bufferToB64Url(d.credentialID), type: 'public-key' })),
   });
   user.currentChallenge = opts.challenge;
   return opts;
@@ -57,18 +67,37 @@ export async function verifyRegistration(credential) {
     requireUserVerification: true,
   });
   if (verification.verified && verification.registrationInfo) {
-    const { credentialPublicKey, credentialID, counter } = verification.registrationInfo;
-    user.devices.push({ credentialID, publicKey: credentialPublicKey, counter });
+    console.log('registrationInfo:', JSON.stringify(verification.registrationInfo));
+    const { credentialID, credentialPublicKey, counter, credential } = verification.registrationInfo;
+    if (credential) {
+      const { id, publicKey, counter: ctr } = credential;
+      const credentialIDBuf = Buffer.isBuffer(id) ? id : b64UrlToBuffer(id);
+      user.devices.push({
+        credentialID: credentialIDBuf,
+        publicKey,
+        counter: ctr,
+      });
+    } else {
+      const credentialIDBuf = Buffer.isBuffer(credentialID)
+        ? credentialID
+        : b64UrlToBuffer(credentialID);
+      user.devices.push({
+        credentialID: credentialIDBuf,
+        publicKey: credentialPublicKey,
+        counter,
+      });
+    }
   }
   return verification.verified;
 }
 
 export async function generateAuth() {
   const user = getUser();
+  console.log('devices before auth:', JSON.stringify(user.devices));
   const opts = await generateAuthenticationOptions({
     rpID,
     userVerification: 'preferred',
-    allowCredentials: user.devices.map((d) => ({ id: d.credentialID, type: 'public-key' })),
+    allowCredentials: user.devices.map((d) => ({ id: bufferToB64Url(d.credentialID), type: 'public-key' })),
   });
   user.currentChallenge = opts.challenge;
   return opts;
@@ -77,12 +106,13 @@ export async function generateAuth() {
 export async function verifyAuth(credential) {
   const user = getUser();
   const device = getUserDevice(credential.rawId);
+  console.log('auth device:', device);
   const verification = await verifyAuthenticationResponse({
     response: credential,
     expectedChallenge: user.currentChallenge,
     expectedOrigin: origin,
     expectedRPID: rpID,
-    authenticator: device,
+    credential: device,
   });
   if (verification.verified && verification.authenticationInfo && device) {
     device.counter = verification.authenticationInfo.newCounter;
