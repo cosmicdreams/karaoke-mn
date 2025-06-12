@@ -41,21 +41,40 @@ function credToJSON(cred) {
   } else if (Array.isArray(cred)) {
     return cred.map(credToJSON);
   } else if (cred && cred.constructor && cred.constructor.name === 'PublicKeyCredential') {
-    // Handle PublicKeyCredential specifically
+    // Serialize PublicKeyCredential for both registration and authentication
     return {
       id: cred.id,
       rawId: credToJSON(cred.rawId),
       response: {
         clientDataJSON: credToJSON(cred.response.clientDataJSON),
-        attestationObject: credToJSON(cred.response.attestationObject)
+        attestationObject: cred.response.attestationObject
+          ? credToJSON(cred.response.attestationObject)
+          : undefined,
+        authenticatorData: cred.response.authenticatorData
+          ? credToJSON(cred.response.authenticatorData)
+          : undefined,
+        signature: cred.response.signature
+          ? credToJSON(cred.response.signature)
+          : undefined,
+        userHandle: cred.response.userHandle
+          ? credToJSON(cred.response.userHandle)
+          : undefined,
       },
-      type: cred.type
+      type: cred.type,
     };
   } else if (cred && cred.constructor && cred.constructor.name === 'AuthenticatorAttestationResponse') {
     // Handle AuthenticatorAttestationResponse specifically
     return {
       clientDataJSON: credToJSON(cred.clientDataJSON),
       attestationObject: credToJSON(cred.attestationObject)
+    };
+  } else if (cred && cred.constructor && cred.constructor.name === 'AuthenticatorAssertionResponse') {
+    // Handle AuthenticatorAssertionResponse specifically
+    return {
+      clientDataJSON: credToJSON(cred.clientDataJSON),
+      authenticatorData: credToJSON(cred.authenticatorData),
+      signature: credToJSON(cred.signature),
+      userHandle: cred.userHandle ? credToJSON(cred.userHandle) : undefined
     };
   } else if (cred && typeof cred === 'object') {
     const obj = {};
@@ -117,6 +136,7 @@ export class KJLogin extends LitElement {
       const optsRaw = await fetch('/auth/login/options').then((r) => r.json());
       const opts = decodeOpts(optsRaw);
       const cred = await navigator.credentials.get({ publicKey: opts });
+      console.log('Assertion response type:', cred.response?.constructor?.name);
       const res = await fetch('/auth/login/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

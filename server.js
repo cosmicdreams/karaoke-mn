@@ -57,9 +57,11 @@ app.get('/auth/login/options', async (req, res) => {
 
 app.post('/auth/login/verify', async (req, res) => {
   try {
+    console.log('Login verification request:', JSON.stringify(req.body));
     const verified = await verifyAuth(req.body);
     res.json({ verified });
   } catch (err) {
+    console.error('Authentication verification error:', err.message);
     res.status(400).json({ error: err.message });
   }
 });

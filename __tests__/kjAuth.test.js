@@ -4,9 +4,11 @@ vi.mock('@simplewebauthn/server', () => ({
   verifyRegistrationResponse: vi.fn(() => Promise.resolve({
     verified: true,
     registrationInfo: {
-      credentialPublicKey: 'pk',
-      credentialID: Buffer.from('dev'),
-      counter: 0,
+      credential: {
+        publicKey: 'pk',
+        id: 'ZGV2',
+        counter: 0,
+      },
     },
   })),
   generateAuthenticationOptions: vi.fn(() => ({ challenge: 'auth-challenge' })),
@@ -37,16 +39,18 @@ describe('kjAuth', () => {
 
     const authOpts = await generateAuth();
     expect(server.generateAuthenticationOptions).toHaveBeenCalledWith(expect.objectContaining({
-      allowCredentials: [expect.objectContaining({ id: expect.any(Buffer) })],
+      allowCredentials: [expect.objectContaining({ id: expect.any(String) })],
     }));
-    const rawId = server.generateAuthenticationOptions.mock.calls[0][0].allowCredentials[0].id.toString('base64url');
+    const rawId = server.generateAuthenticationOptions.mock.calls[0][0].allowCredentials[0].id;
     const authCred = { rawId };
     await verifyAuth(authCred);
 
-    expect(server.verifyAuthenticationResponse).toHaveBeenCalledWith(expect.objectContaining({
-      expectedChallenge: authOpts.challenge,
-      response: authCred,
-      authenticator: expect.any(Object),
-    }));
+    expect(server.verifyAuthenticationResponse).toHaveBeenCalledWith(
+      expect.objectContaining({
+        expectedChallenge: authOpts.challenge,
+        response: authCred,
+        credential: expect.any(Object),
+      }),
+    );
   });
 });
