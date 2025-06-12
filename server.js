@@ -28,6 +28,13 @@ process.env.ADMIN_UUID = adminId;
 const app = express();
 app.use(bodyParser.json());
 
+function isLoggedIn(req) {
+  return (
+    req.headers.cookie?.split(';').some((c) => c.trim().startsWith('kjSession=1')) ||
+    false
+  );
+}
+
 // Serve static files for the Lit UI first
 app.use(express.static(path.join(__dirname, 'public', 'dist')));
 // Serve legacy/admin static files
@@ -43,6 +50,9 @@ app.post('/auth/register/verify', async (req, res) => {
     console.log('Registration verification request:', JSON.stringify(req.body, null, 2));
     const verified = await verifyRegistration(req.body);
     console.log('Registration verification result:', verified);
+    if (verified) {
+      res.cookie('kjSession', '1', { httpOnly: true });
+    }
     res.json({ verified });
   } catch (err) {
     console.error('Registration verification error:', err.message);
@@ -59,6 +69,9 @@ app.post('/auth/login/verify', async (req, res) => {
   try {
     console.log('Login verification request:', JSON.stringify(req.body));
     const verified = await verifyAuth(req.body);
+    if (verified) {
+      res.cookie('kjSession', '1', { httpOnly: true });
+    }
     res.json({ verified });
   } catch (err) {
     console.error('Authentication verification error:', err.message);
@@ -518,6 +531,15 @@ app.post('/phase2', (req, res) => {
   const { startTime } = req.body;
   phase2Start = startTime ? new Date(startTime).getTime() : Date.now();
   res.json({ phase2Start });
+});
+
+app.get('/auth/session', (req, res) => {
+  res.json({ loggedIn: isLoggedIn(req) });
+});
+
+app.post('/auth/logout', (req, res) => {
+  res.clearCookie('kjSession');
+  res.json({ loggedIn: false });
 });
 
 app.get('/singers/:deviceId', async (req, res) => {
