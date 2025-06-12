@@ -49,4 +49,55 @@ describe('queue endpoints', () => {
     const q = await request(app).get('/queue');
     expect(q.body.queue.map((s) => s.id)).toEqual([res2.body.id, res1.body.id]);
   });
+
+  test('queue favors new singers even when one adds many songs', async () => {
+    const session = await request(app).post('/sessions');
+    const { code } = session.body;
+    await request(app).post(`/sessions/${code}/join`).send({ name: 'A' });
+    await request(app).post(`/sessions/${code}/join`).send({ name: 'B' });
+
+    await request(app).post('/songs').send({ videoId: 'AAAAAAAAAAA', singer: 'A' });
+    await request(app).post('/songs').send({ videoId: 'BBBBBBBBBBB', singer: 'A' });
+    await request(app).post('/songs').send({ videoId: 'CCCCCCCCCCC', singer: 'A' });
+    const res = await request(app).post('/songs').send({ videoId: 'DDDDDDDDDDD', singer: 'A' });
+    expect(res.statusCode).toBe(200);
+    await request(app).post('/songs').send({ videoId: 'EEEEEEEEEEE', singer: 'B' });
+
+    const q = await request(app).get('/queue');
+    expect(q.body.queue.map((s) => s.videoId)).toEqual([
+      'AAAAAAAAAAA',
+      'EEEEEEEEEEE',
+      'BBBBBBBBBBB',
+      'CCCCCCCCCCC',
+      'DDDDDDDDDDD',
+    ]);
+  });
+
+  test('delete removes song from queue', async () => {
+    const session = await request(app).post('/sessions');
+    const { code } = session.body;
+    await request(app).post(`/sessions/${code}/join`).send({ name: 'A' });
+
+    const add = await request(app).post('/songs').send({ videoId: 'EEEEEEEEEEE', singer: 'A' });
+    const id = add.body.id;
+    const delRes = await request(app).delete(`/songs/${id}`);
+    expect(delRes.statusCode).toBe(200);
+
+    const q = await request(app).get('/queue');
+    expect(q.body.queue.length).toBe(0);
+  });
+
+  test('replace updates song videoId', async () => {
+    const session = await request(app).post('/sessions');
+    const { code } = session.body;
+    await request(app).post(`/sessions/${code}/join`).send({ name: 'A' });
+
+    const add = await request(app).post('/songs').send({ videoId: 'FFFFFFFFFFF', singer: 'A' });
+    const id = add.body.id;
+    const repRes = await request(app).put(`/songs/${id}`).send({ videoId: 'GGGGGGGGGGG' });
+    expect(repRes.statusCode).toBe(200);
+
+    const q = await request(app).get('/queue');
+    expect(q.body.queue[0].videoId).toBe('GGGGGGGGGGG');
+  });
 });
