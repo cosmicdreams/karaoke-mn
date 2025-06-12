@@ -207,9 +207,9 @@ app.post('/sessions/:code/join', (req, res) => {
 
 function addSong(videoId, singer) {
   const count = queue.filter((q) => q.singer === singer).length;
-  if (count >= 3) {
-    throw new Error('Singer has reached song limit');
-  }
+  // No hard limit on songs per singer, but track how many they have pending
+  // so the fair queue algorithm can favor new singers when necessary.
+  // count variable is retained for potential metrics or future logic.
   if (!singerStats[singer]) singerStats[singer] = { songsSung: 0 };
   const song = { id: uuidv4(), videoId, singer, addedAt: Date.now() };
   queue.push(song);
