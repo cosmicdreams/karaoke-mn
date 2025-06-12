@@ -55,7 +55,7 @@
   - [x] **7.2** Restore the most recent session on server startup
   - [x] **7.3** Track singer profiles (rating, song history, notes) across sessions
   - [ ] **7.4** Expose endpoints for alternate admin UIs to manage the queue and session
-  - [ ] **7.5** Implement server‑side session cookies so the KJ remains logged in
+  - [x] **7.5** Implement server‑side session cookies so the KJ remains logged in
   - [ ] **7.6** Persist passkey device registrations in Firestore
   - [ ] **7.7** Provide `/auth/session` and `/auth/logout` endpoints
   - [ ] **7.8** Check login state on app startup and update the UI accordingly
