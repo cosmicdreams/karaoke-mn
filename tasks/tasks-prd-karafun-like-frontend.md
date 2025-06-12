@@ -36,7 +36,7 @@
 - [ ] **4.0** Create the KJ dashboard with queue management using `fairPlay.js`
   - [x] **4.1** Implement add, reorder, skip and complete actions in `kj-control-panel`.
   - [x] **4.2** Use `fairPlay.js` to order songs returned from `/queue`.
-  - [ ] **4.3** Write Vitest unit tests covering queue logic and KJ endpoints.
+  - [x] **4.3** Write Vitest unit tests covering queue logic and KJ endpoints.
   - [ ] **4.4** Test `kj-login` to ensure the Register and Login buttons invoke
         passkey APIs successfully.
   - [ ] **4.5** Serve the KJ dashboard at `/admin` when authenticated.
