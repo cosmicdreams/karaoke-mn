@@ -10,6 +10,7 @@ vi.mock('../kjAuth.js', () => ({
   verifyRegistration: vi.fn(() => Promise.resolve(true)),
   generateAuth: vi.fn(),
   verifyAuth: vi.fn(() => Promise.resolve(true)),
+  initAuth: vi.fn(() => Promise.resolve()),
 }));
 
 let app;

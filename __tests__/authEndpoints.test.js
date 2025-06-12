@@ -15,6 +15,7 @@ beforeEach(async () => {
     verifyRegistration: vi.fn(() => true),
     generateAuth: vi.fn(),
     verifyAuth: vi.fn(() => true),
+    initAuth: vi.fn(() => Promise.resolve()),
   }));
   const mod = await import('../server.js');
   app = mod.default || mod;
