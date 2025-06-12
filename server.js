@@ -94,6 +94,14 @@ let singerStats = {};
 let phase2Start = null;
 let paused = false;
 
+async function saveSessionState() {
+  if (!db || !currentSession) return;
+  await db
+    .collection('sessions')
+    .doc(currentSession.id)
+    .set({ queue, singerStats }, { merge: true });
+}
+
 async function getVideoInfo(videoId) {
   const resp = await youtube.videos.list({ part: 'snippet', id: videoId });
   if (!resp.data.items.length) throw new Error('Video not found');
@@ -133,7 +141,10 @@ async function createSession() {
   const session = { id, code, preparedContent, createdAt: Date.now() };
   sessions[id] = session;
   currentSession = session;
-  if (db) await db.collection('sessions').doc(id).set(session);
+  if (db) {
+    await db.collection('sessions').doc(id).set(session);
+    await saveSessionState();
+  }
   return session;
 }
 
@@ -164,6 +175,7 @@ function joinSession(code, name, deviceId) {
       .doc(singer.id)
       .set({ name: singer.name, deviceId: singer.deviceId });
   }
+  saveSessionState();
   return {
     sessionId: session.id,
     singerId: singer.id,
@@ -229,6 +241,7 @@ function addSong(videoId, singer) {
   const song = { id: uuidv4(), videoId, singer, addedAt: Date.now() };
   queue.push(song);
   if (db) db.collection('songs').doc(song.id).set(song);
+  saveSessionState();
   return song;
 }
 
@@ -244,6 +257,7 @@ function completeSong(id) {
       .update({ completed: true })
       .catch((e) => console.error('Firestore update error:', e));
   }
+  saveSessionState();
   return song;
 }
 
@@ -257,6 +271,7 @@ function removeSong(id) {
       .delete()
       .catch((e) => console.error('Firestore delete error:', e));
   }
+  saveSessionState();
   return song;
 }
 
@@ -270,6 +285,7 @@ function replaceSong(id, videoId) {
       .update({ videoId })
       .catch((e) => console.error('Firestore update error:', e));
   }
+  saveSessionState();
   return song;
 }
 
@@ -288,6 +304,7 @@ function reorderSongs(order) {
   });
   const remaining = queue.filter((s) => map[s.id]);
   queue = newQueue.concat(remaining);
+  saveSessionState();
 }
 
 function skipSong(id) {
@@ -300,6 +317,7 @@ function skipSong(id) {
       .update({ skipped: true })
       .catch((e) => console.error('Firestore update error:', e));
   }
+  saveSessionState();
   return song;
 }
 
