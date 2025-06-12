@@ -48,11 +48,11 @@ Each item is independent so multiple Codex sessions can work in parallel.
 
 ## User Experience Enhancements
 
-- [ ] Implement a settings/profile screen for KJ and guests (theme, preferences, etc.).
+- [x] Implement a settings/profile screen for KJ and guests (theme, preferences, etc.).
 - [x] Add onboarding/tutorial flow for first-time users (skippable, highlights main features).
 - [ ] Add analytics/stats display (e.g., most popular songs, top singers, session summary).
 - [ ] Implement error/offline handling screens and banners for network or backend issues.
 
 ## Authentication & Passkeys
 
-- [ ] Resolve error during passkey creation: "Failed to execute 'create' on 'CredentialsContainer': Failed to read the 'publicKey' property from 'CredentialCreationOptions': Failed to read the 'challenge' property from 'PublicKeyCredentialCreationOptions': Required member is undefined."
+- [x] Resolve error during passkey creation: "Failed to execute 'create' on 'CredentialsContainer': Failed to read the 'publicKey' property from 'CredentialCreationOptions': Failed to read the 'challenge' property from 'PublicKeyCredentialCreationOptions': Required member is undefined."

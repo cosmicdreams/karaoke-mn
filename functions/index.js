@@ -1,11 +1,11 @@
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
+import * as functions from 'firebase-functions';
+import admin from 'firebase-admin';
 
 if (admin.apps.length === 0) {
   admin.initializeApp();
 }
 
-exports.startSession = functions.https.onCall(async (data, context) => {
+export const startSession = functions.https.onCall(async (data, context) => {
   const drupalUrl = process.env.DRUPAL_CONTENT_URL;
   if (!drupalUrl) {
     throw new functions.https.HttpsError(
