@@ -45,10 +45,10 @@
 - [x] **5.1** Display at least the next five singers in `main-queue-display`.
   - [x] **5.2** Load session content from Firestore and Drupal when available.
   - [x] **5.3** Ensure layouts are responsive across phones, tablets and desktops.
-- [ ] **6.0** Switch the repository to Vitest for all testing
-  - [ ] **6.1** Remove Jest dependencies and config files.
-  - [ ] **6.2** Update documentation and tasks to reference Vitest.
-  - [ ] **6.3** Confirm all existing tests pass with `npm test`.
+- [x] **6.0** Switch the repository to Vitest for all testing
+  - [x] **6.1** Remove Jest dependencies and config files.
+  - [x] **6.2** Update documentation and tasks to reference Vitest.
+  - [x] **6.3** Confirm all existing tests pass with `npm test`.
 
 - [ ] **7.0** Session & Login Persistence
   - [ ] **7.1** Persist active session data (queue, singers, stats) in Firestore so a restart can restore the current room
