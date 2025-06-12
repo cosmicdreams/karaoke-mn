@@ -19,6 +19,21 @@ class KJView extends LitElement {
     this.loggedIn = localStorage.getItem('kjLoggedIn') === 'true';
   }
 
+  connectedCallback() {
+    super.connectedCallback();
+    fetch('/auth/session')
+      .then((r) => r.json())
+      .then((data) => {
+        this.loggedIn = data.loggedIn;
+        if (data.loggedIn) {
+          localStorage.setItem('kjLoggedIn', 'true');
+        } else {
+          localStorage.removeItem('kjLoggedIn');
+        }
+      })
+      .catch((err) => console.error('login state check failed', err));
+  }
+
   _onLogin() {
     this.loggedIn = true;
     localStorage.setItem('kjLoggedIn', 'true');
