@@ -1,5 +1,6 @@
-require('dotenv').config();
-const {google} = require('googleapis');
+import dotenv from 'dotenv';
+dotenv.config();
+import { google } from 'googleapis';
 const query = process.argv.slice(2).join(' ');
 
 if (!query) {
