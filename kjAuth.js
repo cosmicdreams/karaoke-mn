@@ -59,20 +59,28 @@ function deserializeDevice(data) {
 
 async function loadDevices() {
   if (!db) return;
-  const doc = await db.collection('passkeyDevices').doc('kj').get();
-  if (!doc.exists) return;
-  const data = doc.data();
-  if (data && Array.isArray(data.devices)) {
-    kjUser.devices = data.devices.map(deserializeDevice);
+  try {
+    const doc = await db.collection('passkeyDevices').doc('kj').get();
+    if (!doc.exists) return;
+    const data = doc.data();
+    if (data && Array.isArray(data.devices)) {
+      kjUser.devices = data.devices.map(deserializeDevice);
+    }
+  } catch (err) {
+    console.error('Failed to load passkey devices from Firestore:', err.message);
   }
 }
 
 async function saveDevices() {
   if (!db) return;
-  await db
-    .collection('passkeyDevices')
-    .doc('kj')
-    .set({ devices: kjUser.devices.map(serializeDevice) });
+  try {
+    await db
+      .collection('passkeyDevices')
+      .doc('kj')
+      .set({ devices: kjUser.devices.map(serializeDevice) });
+  } catch (err) {
+    console.error('Failed to save passkey devices to Firestore:', err.message);
+  }
 }
 
 export async function initAuth(firestore = getFirestore()) {
