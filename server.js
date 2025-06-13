@@ -97,7 +97,11 @@ let db;
 (async () => {
   db = await getFirestore();
   await initAuth(db);
-  await restoreLatestSession();
+  try {
+    await restoreLatestSession();
+  } catch (err) {
+    console.error('Error restoring session:', err.message);
+  }
 
   const port = process.env.PORT || 3000;
   if (import.meta.url === `file://${process.argv[1]}`) {
@@ -252,14 +256,19 @@ app.post('/sessions', async (req, res) => {
 
 async function loadLatestSession() {
   if (!db) return null;
-  const snap = await db
-    .collection('sessions')
-    .orderBy('createdAt', 'desc')
-    .limit(1)
-    .get();
-  if (snap.empty) return null;
-  const doc = snap.docs[0];
-  return { id: doc.id, ...doc.data() };
+  try {
+    const snap = await db
+      .collection('sessions')
+      .orderBy('createdAt', 'desc')
+      .limit(1)
+      .get();
+    if (snap.empty) return null;
+    const doc = snap.docs[0];
+    return { id: doc.id, ...doc.data() };
+  } catch (err) {
+    console.error('Failed to load session from Firestore:', err.message);
+    return null;
+  }
 }
 
 async function restoreLatestSession() {
@@ -272,12 +281,17 @@ async function restoreLatestSession() {
   paused = session.paused || false;
   phase2Start = session.phase2Start || null;
   if (db) {
-    const snap = await db
-      .collection('sessions')
-      .doc(session.id)
-      .collection('singers')
-      .get();
-    singers[session.id] = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    try {
+      const snap = await db
+        .collection('sessions')
+        .doc(session.id)
+        .collection('singers')
+        .get();
+      singers[session.id] = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    } catch (err) {
+      console.error('Failed to load singers from Firestore:', err.message);
+      singers[session.id] = [];
+    }
   } else {
     singers[session.id] = [];
   }
