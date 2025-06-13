@@ -100,32 +100,44 @@ export class KaraokeApp extends LitElement {
   static properties = {
     route: { state: true },
     onboardingComplete: { state: true },
+    roomCode: { state: true },
   };
 
   constructor() {
     super();
     this.route = this._getRoute();
     this.onboardingComplete = localStorage.getItem('onboardingComplete') === 'true';
+    this.roomCode = null;
     this._onPopState = () => {
       this.route = this._getRoute();
     };
   }
 
+  _onSessionCreated(e) {
+    this.roomCode = e.detail.code;
+  }
+
   connectedCallback() {
     super.connectedCallback();
     window.addEventListener('popstate', this._onPopState);
+    this.addEventListener('session-created', this._onSessionCreated);
   }
 
   disconnectedCallback() {
     window.removeEventListener('popstate', this._onPopState);
+    this.removeEventListener('session-created', this._onSessionCreated);
     super.disconnectedCallback();
   }
 
   _getRoute() {
     const path = window.location.pathname;
+    const playMatch = path.match(/^\/([^/]+)\/play/);
+    if (playMatch) {
+      this.roomCode = playMatch[1];
+      return 'play';
+    }
     if (path === '/' || path.startsWith('/guest')) return 'guest';
     if (path.startsWith('/admin')) return 'kj';
-    if (path.startsWith('/main')) return 'main';
     if (path.startsWith('/settings')) return 'settings';
     return 'guest';
   }
@@ -153,24 +165,29 @@ export class KaraokeApp extends LitElement {
   `;
 
   render() {
+    if (this.route === 'play') {
+      return html`<main-screen-view .roomCode=${this.roomCode}></main-screen-view>`;
+    }
+
+    if (!this.onboardingComplete) {
+      return html`<onboarding-flow @onboarding-complete=${this._handleOnboardingComplete}></onboarding-flow>`;
+    }
+
     return html`
-      ${!this.onboardingComplete
-        ? html`<onboarding-flow @onboarding-complete=${this._handleOnboardingComplete}></onboarding-flow>`
-        : html`
-            <nav>
-              <a @click=${() => this._navigate('/admin')}>KJ</a>
-              <a @click=${() => this._navigate('/')}>Guest</a>
-              <a @click=${() => this._navigate('/main')}>Main</a>
-              <a @click=${() => this._navigate('/settings')}>Settings</a>
-            </nav>
-            ${this.route === 'kj'
-              ? html`<kj-view></kj-view>`
-              : this.route === 'guest'
-                ? html`<guest-view></guest-view>`
-                : this.route === 'main'
-                  ? html`<main-screen-view></main-screen-view>`
-                  : html`<settings-profile></settings-profile>`}
-          `}
+      <nav>
+        <a @click=${() => this._navigate('/admin')}>KJ</a>
+        <a @click=${() => this._navigate('/')}>Guest</a>
+        <a
+          ?disabled=${!this.roomCode}
+          @click=${() => this.roomCode && this._navigate(`/${this.roomCode}/play`)}
+        >Play</a>
+        <a @click=${() => this._navigate('/settings')}>Settings</a>
+      </nav>
+      ${this.route === 'kj'
+        ? html`<kj-view></kj-view>`
+        : this.route === 'guest'
+          ? html`<guest-view></guest-view>`
+          : html`<settings-profile></settings-profile>`}
     `;
   }
 }

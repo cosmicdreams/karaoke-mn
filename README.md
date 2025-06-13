@@ -67,9 +67,9 @@ manage a simple in-memory song queue. If `GOOGLE_APPLICATION_CREDENTIALS` is set
 to a Firebase service account file, queued songs will also be stored in
 Firestore.
 
-Start the server with:
+Start the app (build frontend and launch server) with:
 ```bash
-node server.js
+npm start
 ```
 
 Visit `http://localhost:3000/` in a browser to see the main screen with the

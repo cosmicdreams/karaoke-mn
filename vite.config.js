@@ -1,9 +1,11 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  root: 'frontend',
+  // Serve and build the Lit SPA under src/frontend
+  root: 'src/frontend',
   build: {
-    outDir: '../public/dist',
-    emptyOutDir: false,
+    // Output built assets to ../../dist (for Express to serve statically)
+    outDir: '../../dist',
+    emptyOutDir: true,
   },
 });
