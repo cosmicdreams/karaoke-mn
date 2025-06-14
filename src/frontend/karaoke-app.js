@@ -7,7 +7,6 @@ import './guest-queue-view.js';
 import './guest-songbook.js';
 import './main-screen-view.js';
 import './settings-profile.js';
-import './onboarding-flow.js';
 import './login-form.js';
 import './error-banner.js';
 
@@ -101,7 +100,6 @@ customElements.define('guest-view', GuestView);
 export class KaraokeApp extends LitElement {
   static properties = {
     route: { state: true },
-    onboardingComplete: { state: true },
     roomCode: { state: true },
     stageName: { state: true },
     bannerMessage: { state: true },
@@ -111,7 +109,6 @@ export class KaraokeApp extends LitElement {
   constructor() {
     super();
     this.route = this._getRoute();
-    this.onboardingComplete = localStorage.getItem('onboardingComplete') === 'true';
     this.roomCode = null;
     this.stageName = localStorage.getItem('stageName');
     this.bannerMessage = '';
@@ -175,10 +172,6 @@ export class KaraokeApp extends LitElement {
     this.route = this._getRoute();
   }
 
-  _handleOnboardingComplete() {
-    this.onboardingComplete = true;
-    localStorage.setItem('onboardingComplete', 'true');
-  }
 
   static styles = css`
     nav {
@@ -195,10 +188,6 @@ export class KaraokeApp extends LitElement {
   render() {
     if (this.route === 'play') {
       return html`<main-screen-view .roomCode=${this.roomCode}></main-screen-view>`;
-    }
-
-    if (!this.onboardingComplete) {
-      return html`<onboarding-flow @onboarding-complete=${this._handleOnboardingComplete}></onboarding-flow>`;
     }
 
     if (this.route !== 'kj' && !this.stageName) {
