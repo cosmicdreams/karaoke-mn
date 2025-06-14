@@ -40,18 +40,18 @@
   - [x] 5.2 Extract shared helpers (date formatting, toasts) into `src/shared/`.
   - [x] 5.3 Consume CSS variables & tokens from `app-theme.js` in components.
 
-- [ ] 6.0 Theming and Responsive Layout Updates
+- [x] 6.0 Theming and Responsive Layout Updates
 
-  - [ ] 6.1 Apply dark theme variables (colors, fonts) from `app-theme.js`.
-  - [ ] 6.2 Add responsive breakpoints for phones, tablets, and TVs.
-  - [ ] 6.3 Audit contrast and typography per WCAG AA.
-  - [ ] 6.4 Ensure `login-form`, `guest-song-search`, and `settings-profile` use
+  - [x] 6.1 Apply dark theme variables (colors, fonts) from `app-theme.js`.
+  - [x] 6.2 Add responsive breakpoints for phones, tablets, and TVs.
+  - [x] 6.3 Audit contrast and typography per WCAG AA.
+  - [x] 6.4 Ensure `login-form`, `guest-song-search`, and `settings-profile` use
         the shared theme tokens.
-  - [ ] 6.5 Add orientation-specific layouts for portrait vs. landscape on
+  - [x] 6.5 Add orientation-specific layouts for portrait vs. landscape on
         mobile devices.
-  - [ ] 6.6 Create shared mixins/utilities for consistent spacing and surface
+  - [x] 6.6 Create shared mixins/utilities for consistent spacing and surface
         colors across components.
-  - [ ] 6.7 Document responsive examples in Storybook and verify breakpoints
+  - [x] 6.7 Document responsive examples in Storybook and verify breakpoints
         with screenshot tests.
 
   - [x] 7.1 Create `<error-banner>` for global messages.

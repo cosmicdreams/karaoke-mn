@@ -1,5 +1,8 @@
 import { LitElement, html, css } from 'lit';
-import { spacingStyles } from '../shared/theme-utils.js';
+import {
+  spacingStyles,
+  mobileLandscapeStyles,
+} from '../shared/theme-utils.js';
 import './search-bar-with-status.js';
 import './search-results-list.js';
 import './toggle-view-button.js';
@@ -99,6 +102,7 @@ export class SettingsProfile extends LitElement {
 
   static styles = [
     spacingStyles,
+    mobileLandscapeStyles,
     css`
       :host {
         display: block;
@@ -119,9 +123,15 @@ export class SettingsProfile extends LitElement {
       align-items: center;
       padding: calc(var(--spacing-sm) / 2) 0;
     }
-    button {
-      margin-left: var(--spacing-sm);
-    }
+      button {
+        margin-left: var(--spacing-sm);
+      }
+
+      @media (orientation: landscape) and (max-width: var(--breakpoint-phone)) {
+        :host {
+          padding: var(--spacing-sm);
+        }
+      }
 
       @media (min-width: var(--breakpoint-tablet)) {
         :host {
