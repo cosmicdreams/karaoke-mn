@@ -35,8 +35,8 @@ export class ModalDialog extends LitElement {
       justify-content: center;
     }
     .dialog {
-      background: #fff;
-      color: #000;
+      background: var(--surface-color);
+      color: var(--text-color);
       padding: 1rem;
       border-radius: 4px;
       max-width: 90%;

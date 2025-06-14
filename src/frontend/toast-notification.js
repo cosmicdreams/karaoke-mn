@@ -30,8 +30,8 @@ export class ToastNotification extends LitElement {
       left: 50%;
       bottom: 1rem;
       transform: translateX(-50%);
-      background: #323232;
-      color: #fff;
+      background: var(--surface-color);
+      color: var(--text-color);
       padding: 0.5rem 1rem;
       border-radius: 4px;
       opacity: 0;

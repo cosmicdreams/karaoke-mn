@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import { parseVideoId } from '../parseVideoId.js';
+import { parseVideoId } from '../../src/shared/parseVideoId.js';
 
 describe('parseVideoId', () => {
   test('returns ID when input is already an ID', () => {

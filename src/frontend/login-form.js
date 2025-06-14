@@ -149,7 +149,7 @@ export class LoginForm extends LitElement {
       padding: 0.5rem;
       margin-top: 0.5rem;
       border-radius: 4px;
-      border: 1px solid #555;
+      border: 1px solid var(--surface-color);
       width: 100%;
       box-sizing: border-box;
     }

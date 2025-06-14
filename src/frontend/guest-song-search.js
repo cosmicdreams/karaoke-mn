@@ -4,6 +4,8 @@ import './search-bar-with-status.js';
 import './search-results-list.js';
 import './video-preview-modal.js';
 import './toast-notification.js';
+import { parseVideoId } from '../shared/parseVideoId.js';
+import { showToast } from '../shared/toast.js';
 
 export class GuestSongSearch extends LitElement {
   static properties = {
@@ -24,40 +26,42 @@ export class GuestSongSearch extends LitElement {
   }
 
   async _addSong(e) {
-    const { videoId, title } = e.detail;
-    if (!videoId || !this.singer) return;
+    const { videoId, url, title } = e.detail;
+    const vid = parseVideoId(videoId || url);
+    if (!vid || !this.singer) return;
     try {
       const res = await fetch('/songs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ videoId, singer: this.singer }),
+        body: JSON.stringify({ videoId: vid, singer: this.singer }),
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.error || `Status ${res.status}`);
       }
-      this._showToast(`Added to queue: ${title}`);
+      showToast(this.renderRoot, `Added to queue: ${title}`, 'search-toast');
     } catch (err) {
-      this._showToast(`Failed to add song: ${err.message}`);
+      showToast(this.renderRoot, `Failed to add song: ${err.message}`, 'search-toast');
     }
   }
 
   async _previewSong(e) {
-    const { videoId } = e.detail;
-    if (!videoId) return;
+    const { videoId, url } = e.detail;
+    const vid = parseVideoId(videoId || url);
+    if (!vid) return;
     try {
       const res = await fetch(
-        `/preview?videoId=${encodeURIComponent(videoId)}`,
+        `/preview?videoId=${encodeURIComponent(vid)}`,
       );
       if (res.ok) {
         const info = await res.json();
         this.preview = info;
       } else {
         const err = await res.json().catch(() => ({}));
-        this._showToast(err.error || 'Failed to load preview');
+        showToast(this.renderRoot, err.error || 'Failed to load preview', 'search-toast');
       }
     } catch (err) {
-      this._showToast(`Failed to load preview: ${err.message}`);
+      showToast(this.renderRoot, `Failed to load preview: ${err.message}`, 'search-toast');
     }
   }
 
@@ -76,10 +80,6 @@ export class GuestSongSearch extends LitElement {
       display: block;
     }
   `;
-
-  _showToast(msg) {
-    this.renderRoot.getElementById('search-toast')?.show(msg);
-  }
 
   render() {
     return html`
