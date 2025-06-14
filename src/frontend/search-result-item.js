@@ -71,7 +71,12 @@ export class SearchResultItem extends LitElement {
   render() {
     return html`
       <li>
-        <span>${this.result.title}</span>
+        <span>
+          ${this.result.title}
+          ${this.result.artist
+            ? html`<br /><small>${this.result.artist}</small>`
+            : ''}
+        </span>
         <span>
           <button
             @click=${this._add}

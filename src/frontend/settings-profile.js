@@ -11,6 +11,7 @@ export class SettingsProfile extends LitElement {
     results: { state: true },
     viewMode: { state: true },
     status: { state: true },
+    sortBy: { state: true },
   };
 
   constructor() {
@@ -21,6 +22,7 @@ export class SettingsProfile extends LitElement {
     this.results = [];
     this.viewMode = 'list';
     this.status = '';
+    this.sortBy = 'title';
   }
 
   async connectedCallback() {
@@ -124,7 +126,11 @@ export class SettingsProfile extends LitElement {
       <h2>Settings / Profile</h2>
       <div>
         <label for="stage">Stage Name</label>
-        <input id="stage" .value=${this.stageName} @input=${this._onStageInput} />
+        <input
+          id="stage"
+          .value=${this.stageName}
+          @input=${this._onStageInput}
+        />
         <span class="badge" aria-live="polite">
           ${this.status === 'saved' ? 'Saved' : ''}
         </span>
@@ -135,8 +141,13 @@ export class SettingsProfile extends LitElement {
       </div>
 
       <h3>Add Favorites</h3>
-      <toggle-view-button .mode=${this.viewMode} @toggle=${this._onToggle}></toggle-view-button>
-      <search-bar-with-status @results=${this._onResults}></search-bar-with-status>
+      <toggle-view-button
+        .mode=${this.viewMode}
+        @toggle=${this._onToggle}
+      ></toggle-view-button>
+      <search-bar-with-status
+        @results=${this._onResults}
+      ></search-bar-with-status>
       <search-results-list
         .results=${this.results}
         .viewMode=${this.viewMode}
@@ -144,13 +155,33 @@ export class SettingsProfile extends LitElement {
       ></search-results-list>
 
       <h3>Your Favorites</h3>
+      <div>
+        <label for="sort">Sort by:</label>
+        <select id="sort" @change=${(e) => (this.sortBy = e.target.value)}>
+          <option value="title" ?selected=${this.sortBy === 'title'}>
+            Title
+          </option>
+          <option value="artist" ?selected=${this.sortBy === 'artist'}>
+            Artist
+          </option>
+        </select>
+      </div>
       <ul>
-        ${this.favorites.map(
-          (f) => html`<li>
-            <span>${f.title}</span>
-            <button data-id=${f.videoId} @click=${this._removeFavorite}>Remove</button>
-          </li>`,
-        )}
+        ${[...this.favorites]
+          .sort((a, b) => {
+            const av = (a[this.sortBy] || '').toLowerCase();
+            const bv = (b[this.sortBy] || '').toLowerCase();
+            return av.localeCompare(bv);
+          })
+          .map(
+            (f) =>
+              html`<li>
+                <span>${f.title}${f.artist ? html` - ${f.artist}` : ''}</span>
+                <button data-id=${f.videoId} @click=${this._removeFavorite}>
+                  Remove
+                </button>
+              </li>`,
+          )}
       </ul>
     `;
   }

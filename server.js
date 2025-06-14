@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import express from 'express';
-import session from "express-session";
+import session from 'express-session';
 import bodyParser from 'body-parser';
 import { google } from 'googleapis';
 import { getFirestore } from './firebase.js';
@@ -29,8 +29,10 @@ const adminId = process.env.ADMIN_UUID || uuidv4();
 process.env.ADMIN_UUID = adminId;
 
 const app = express();
-const sessionSecret = process.env.SESSION_SECRET || "kj-secret";
-app.use(session({ secret: sessionSecret, resave: false, saveUninitialized: false }));
+const sessionSecret = process.env.SESSION_SECRET || 'kj-secret';
+app.use(
+  session({ secret: sessionSecret, resave: false, saveUninitialized: false }),
+);
 app.use(bodyParser.json());
 
 function isLoggedIn(req) {
@@ -50,7 +52,10 @@ app.get('/auth/register/options', async (req, res) => {
 
 app.post('/auth/register/verify', async (req, res) => {
   try {
-    console.log('Registration verification request:', JSON.stringify(req.body, null, 2));
+    console.log(
+      'Registration verification request:',
+      JSON.stringify(req.body, null, 2),
+    );
     const verified = await verifyRegistration(req.body);
     if (verified) req.session.loggedIn = true;
     console.log('Registration verification result:', verified);
@@ -161,6 +166,7 @@ async function getVideoInfo(videoId) {
   return {
     videoId,
     title: snippet.title,
+    artist: snippet.channelTitle,
     thumbnail: snippet.thumbnails.default.url,
   };
 }
@@ -214,16 +220,14 @@ async function joinSession(code, name, deviceId) {
     singer = { id: uuidv4(), name, deviceId };
     singers[session.id].push(singer);
     if (!singerStats[singer.name]) singerStats[singer.name] = { songsSung: 0 };
-      let profile =
-        (await loadSingerProfile(deviceId)) ||
-        {
-          id: deviceId,
-          name,
-          rating: 0,
-          history: [],
-          favorites: [],
-          notes: '',
-        };
+    let profile = (await loadSingerProfile(deviceId)) || {
+      id: deviceId,
+      name,
+      rating: 0,
+      history: [],
+      favorites: [],
+      notes: '',
+    };
     profile.name = name;
     await saveSingerProfile(profile);
   } else {
@@ -366,8 +370,7 @@ async function completeSong(id) {
       .update({ completed: true })
       .catch((e) => console.error('Firestore update error:', e));
   }
-  const profile =
-    song.deviceId && (await loadSingerProfile(song.deviceId));
+  const profile = song.deviceId && (await loadSingerProfile(song.deviceId));
   if (profile) {
     profile.history.push({
       sessionId: currentSession?.id,
@@ -454,6 +457,7 @@ app.get('/search', async (req, res) => {
       r.data.items.map((item) => ({
         videoId: item.id.videoId,
         title: item.snippet.title,
+        artist: item.snippet.channelTitle,
       })),
     );
   } catch (err) {
@@ -721,21 +725,21 @@ app.get('/singers/:deviceId', async (req, res) => {
 app.put('/singers/:deviceId', async (req, res) => {
   const { deviceId } = req.params;
   try {
-      let profile =
-        singerProfiles[deviceId] ||
-        (await loadSingerProfile(deviceId)) || {
-          id: deviceId,
-          name: '',
-          rating: 0,
-          history: [],
-          favorites: [],
-          notes: '',
-        };
-      if (req.body.rating !== undefined) profile.rating = req.body.rating;
-      if (req.body.notes !== undefined) profile.notes = req.body.notes;
-      if (req.body.favorites !== undefined) profile.favorites = req.body.favorites;
-      await saveSingerProfile(profile);
-      res.json(profile);
+    let profile = singerProfiles[deviceId] ||
+      (await loadSingerProfile(deviceId)) || {
+        id: deviceId,
+        name: '',
+        rating: 0,
+        history: [],
+        favorites: [],
+        notes: '',
+      };
+    if (req.body.rating !== undefined) profile.rating = req.body.rating;
+    if (req.body.notes !== undefined) profile.notes = req.body.notes;
+    if (req.body.favorites !== undefined)
+      profile.favorites = req.body.favorites;
+    await saveSingerProfile(profile);
+    res.json(profile);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
