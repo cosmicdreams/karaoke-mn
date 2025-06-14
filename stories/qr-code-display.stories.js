@@ -1,3 +1,4 @@
+import { expect } from '@storybook/test-runner';
 import '../frontend/qr-code-display.js';
 
 export default {
@@ -18,4 +19,8 @@ const Template = (args) => {
 export const Default = Template.bind({});
 Default.args = {
   text: 'https://karaoke.mn/join/ROOM123',
-}; 
+};
+
+Default.play = async ({ canvasElement }) => {
+  await expect(canvasElement).toBeAccessible();
+};
