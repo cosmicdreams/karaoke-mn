@@ -67,8 +67,8 @@
 
 - [ ] 9.0 Component Isolation & Testing with Storybook
   - [ ] 9.1 Configure Storybook 9 to load all Lit components from `src/frontend/`.
-  - [ ] 9.2 Write stories for each new or updated component (`<login-form>`, `<search-bar-with-status>`, etc.).
-  - [ ] 9.3 Develop Storybook-driven tests for component behavior and accessibility using Storybook 9’s testing API.
+  - [ ] 9.2 Write stories for components completed in tasks 2–4 (`<login-form>`, `<search-bar-with-status>`, `<toggle-view-button>`, `<search-results-list>`, `<popover-queue>`, `<settings-profile>`).
+  - [ ] 9.3 Develop Storybook-driven tests for these components using Storybook 9’s testing API and verify accessibility.
   - [ ] 9.4 Integrate Storybook test runs into CI.
 
 I have generated the high-level tasks based on the UI Design PRD.
