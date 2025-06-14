@@ -14,7 +14,7 @@
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "test:storybook": "storybook test",
+    "test:storybook": "test-storybook",
     "test:e2e": "playwright test"
   },
   "keywords": [],
@@ -38,7 +38,9 @@
   "devDependencies": {
     "@chromatic-com/storybook": "^4.0.0",
     "@playwright/test": "^1.53.0",
+    "@storybook/addon-a11y": "^9.0.9",
     "@storybook/addon-docs": "^9.0.8",
+    "@storybook/test-runner": "^0.23.0",
     "@storybook/web-components-vite": "^9.0.8",
     "eslint": "^9.28.0",
     "eslint-plugin-import": "^2.31.0",

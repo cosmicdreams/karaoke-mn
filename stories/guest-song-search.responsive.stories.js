@@ -1,3 +1,4 @@
+import { expect } from '@storybook/test-runner';
 import '../src/frontend/guest-song-search.js';
 
 export default {
@@ -9,4 +10,8 @@ export default {
 export const Default = () => {
   const el = document.createElement('guest-song-search');
   return el;
+};
+
+Default.play = async ({ canvasElement }) => {
+  await expect(canvasElement).toBeAccessible();
 };
