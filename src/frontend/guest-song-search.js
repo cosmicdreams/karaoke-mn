@@ -1,52 +1,45 @@
 import { LitElement, html, css } from 'lit';
-import './search-bar.js';
+import './popover-queue.js';
+import './toggle-view-button.js';
+import './search-bar-with-status.js';
 import './search-results-list.js';
-import './loading-spinner.js';
 import './video-preview-modal.js';
+import './toast-notification.js';
 
 export class GuestSongSearch extends LitElement {
   static properties = {
     results: { state: true },
-    loading: { state: true },
     singer: { type: String },
     preview: { state: true },
+    viewMode: { state: true },
   };
 
   constructor() {
     super();
     this.results = [];
-    this.loading = false;
     this.singer = '';
     this.preview = null;
+    this.viewMode = 'list';
   }
 
-  async _onSearch(e) {
-    const input = e.detail.value.trim();
-    if (!input) return;
-    const q = input.toLowerCase().includes('karaoke')
-      ? input
-      : `${input} karaoke`;
-    this.loading = true;
-    try {
-      const res = await fetch('/search?q=' + encodeURIComponent(q));
-      const data = await res.json();
-      this.results = Array.isArray(data) ? data : [];
-    } catch (err) {
-      console.error(err);
-      this.results = [];
-    } finally {
-      this.loading = false;
-    }
+  _handleResults(e) {
+    this.results = Array.isArray(e.detail) ? e.detail : [];
   }
 
   async _addSong(e) {
-    const { videoId } = e.detail;
+    const { videoId, title } = e.detail;
     if (!videoId || !this.singer) return;
-    await fetch('/songs', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ videoId, singer: this.singer }),
-    });
+    try {
+      const res = await fetch('/songs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ videoId, singer: this.singer }),
+      });
+      if (!res.ok) throw new Error(`Status ${res.status}`);
+      this._showToast(`Added to queue: ${title}`);
+    } catch (err) {
+      this._showToast(`Failed to add song: ${err.message}`);
+    }
   }
 
   async _previewSong(e) {
@@ -81,23 +74,31 @@ export class GuestSongSearch extends LitElement {
     }
   `;
 
+  _showToast(msg) {
+    this.renderRoot.getElementById('search-toast')?.show(msg);
+  }
+
   render() {
     return html`
-      <search-bar @search=${this._onSearch}></search-bar>
-      ${this.loading
-        ? html`<loading-spinner></loading-spinner>`
-        : html`<search-results-list
-            .results=${this.results}
-            @add-song=${this._addSong}
-            @save-song=${this._saveSong}
-            @preview-song=${this._previewSong}
-          ></search-results-list>`}
+      <div class="controls">
+        <popover-queue .singer=${this.singer}></popover-queue>
+        <toggle-view-button .mode=${this.viewMode} @toggle=${e => (this.viewMode = e.detail)}></toggle-view-button>
+      </div>
+      <search-bar-with-status @results=${this._handleResults}></search-bar-with-status>
+      <search-results-list
+        .results=${this.results}
+        .viewMode=${this.viewMode}
+        @add-song=${this._addSong}
+        @save-song=${this._saveSong}
+        @preview-song=${this._previewSong}
+      ></search-results-list>
       <video-preview-modal
         .videoId=${this.preview?.videoId || ''}
         .title=${this.preview?.title || ''}
         .open=${!!this.preview}
         @click=${() => (this.preview = null)}
       ></video-preview-modal>
+      <toast-notification id="search-toast"></toast-notification>
     `;
   }
 }

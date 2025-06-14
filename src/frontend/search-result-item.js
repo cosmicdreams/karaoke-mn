@@ -43,12 +43,28 @@ export class SearchResultItem extends LitElement {
   static styles = css`
     li {
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
       align-items: center;
-      padding: 0.25rem 0;
+      padding: 0.5rem;
+      background: var(--surface-color);
+      border-radius: 4px;
+      text-align: center;
+    }
+    img {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+    }
+    .actions {
+      display: flex;
+      gap: 0.25rem;
+      margin-top: 0.5rem;
     }
     button {
-      margin-left: 0.5rem;
+      flex: 1;
+      padding: 0.25rem 0.5rem;
     }
   `;
 

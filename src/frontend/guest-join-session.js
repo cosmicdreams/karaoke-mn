@@ -120,6 +120,7 @@ export class GuestJoinSession extends LitElement {
             @input=${this._onNameInput}
             autocomplete="off"
             required
+            autofocus
           />
         </div>
         <button type="submit" aria-label="Join session">Join</button>

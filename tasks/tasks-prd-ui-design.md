@@ -5,34 +5,42 @@
   - [x] 1.2 Implement overlays for room code, join URL, and QR code with accessible contrast.
   - [x] 1.3 Auto-hide controls after a few seconds of inactivity.
 - [x] 1.4 Add watermark component with join link in footer or corner.
-- [ ] 1.5 Route full-screen video to `/<room-id>/play` and remove upcoming queue/main search UI from this view.
+- [x] 1.5 Route full-screen video to `/<room-id>/play` and remove upcoming queue/main search UI from this view.
 
 - [ ] 2.0 Login / Splash Authentication Flow
-  - [ ] 2.1 Build `<login-form>` component with StageName input and confirm button.
-  - [ ] 2.2 Integrate WebAuthn passkey flows via `kjAuth.js`.
-  - [ ] 2.3 Persist StageName and credentials in `localStorage`.
-  - [ ] 2.4 Redirect or display errors based on authentication result.
+
+  - [x] 2.1 Build `<login-form>` component with StageName input and confirm button.
+  - [x] 2.2 Integrate WebAuthn passkey flows via `kjAuth.js`.
+  - [x] 2.3 Persist StageName and credentials in `localStorage`.
+  - [x] 2.4 Redirect or display errors based on authentication result.
+  - [ ] 2.5 Ensure Login/Splash UI matches design mock (Login-Splash-Screen.jpg)
 
 - [ ] 3.0 Main Search Screen Layout and Components
-  - [ ] 3.1 Integrate `<search-bar-with-status>` bound to `/search?q=` API.
-  - [ ] 3.2 Implement `<toggle-view-button>` for grid/list modes.
-  - [ ] 3.3 Create `<search-results-list>` for grid and list templates.
-  - [ ] 3.4 Add “Add to queue” action with toast feedback.
-  - [ ] 3.5 Develop `<popover-queue>` to show current + next singers and user’s queued songs.
+
+  - [x] 3.1 Integrate `<search-bar-with-status>` bound to `/search?q=` API.
+  - [x] 3.2 Implement `<toggle-view-button>` for grid/list modes.
+  - [x] 3.3 Create `<search-results-list>` for grid and list templates.
+  - [x] 3.4 Add “Add to queue” action with toast feedback.
+  - [x] 3.5 Develop `<popover-queue>` to show current + next singers and user’s queued songs.
+  - [ ] 3.6 Ensure Main Search screen UI matches design mock (Main-Search-Screen.jpg)
 
 - [ ] 4.0 User Profile & Favorites Screen
+
   - [ ] 4.1 Build `<settings-profile>` view with inline StageName edit and Cloud Save badge.
   - [ ] 4.2 Load and save favorites via Firestore.
   - [ ] 4.3 Reuse `<search-bar-with-status>` and `<toggle-view-button>` for favorites.
   - [ ] 4.4 Render favorites list with remove action.
   - [ ] 4.5 Add sort controls (by song title / artist).
+  - [ ] 4.6 Ensure Profile & Favorites UI matches design mock (Profile-Favorites-Screen.jpg)
 
 - [ ] 5.0 Shared UI Components Extraction and Integration
+
   - [ ] 5.1 Refine `parseVideoId.js` import into preview and search components.
   - [ ] 5.2 Extract shared helpers (date formatting, toasts) into `src/shared/`.
   - [ ] 5.3 Consume CSS variables & tokens from `app-theme.js` in components.
 
 - [ ] 6.0 Theming and Responsive Layout Updates
+
   - [ ] 6.1 Apply dark theme variables (colors, fonts) from `app-theme.js`.
   - [ ] 6.2 Add responsive breakpoints for phones, tablets, and TVs.
   - [ ] 6.3 Audit contrast and typography per WCAG AA.
@@ -42,6 +50,7 @@
   - [ ] 7.3 Handle empty states (no results, empty queue).
 
 - [ ] 8.0 Frontend Cleanup & Removal of Obsolete Resources
+
   - [ ] 8.1 Audit `src/frontend/` for unused or legacy Lit components.
   - [ ] 8.2 Delete deprecated component files (e.g., onboarding-flow.js, hello-lit.js).
   - [ ] 8.3 Remove outdated Storybook stories and assets not aligned with new UI mocks.
