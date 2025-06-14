@@ -13,7 +13,7 @@
   - [x] 2.2 Integrate WebAuthn passkey flows via `kjAuth.js`.
   - [x] 2.3 Persist StageName and credentials in `localStorage`.
   - [x] 2.4 Redirect or display errors based on authentication result.
-  - [ ] 2.5 Ensure Login/Splash UI matches design mock (Login-Splash-Screen.jpg)
+  - [x] 2.5 Ensure Login/Splash UI matches design mock (Login-Splash-Screen.jpg)
 
 - [ ] 3.0 Main Search Screen Layout and Components
 

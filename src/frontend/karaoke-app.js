@@ -8,6 +8,7 @@ import './guest-songbook.js';
 import './main-screen-view.js';
 import './settings-profile.js';
 import './onboarding-flow.js';
+import './login-form.js';
 
 class KJView extends LitElement {
   static properties = {
@@ -101,6 +102,7 @@ export class KaraokeApp extends LitElement {
     route: { state: true },
     onboardingComplete: { state: true },
     roomCode: { state: true },
+    stageName: { state: true },
   };
 
   constructor() {
@@ -108,6 +110,7 @@ export class KaraokeApp extends LitElement {
     this.route = this._getRoute();
     this.onboardingComplete = localStorage.getItem('onboardingComplete') === 'true';
     this.roomCode = null;
+    this.stageName = localStorage.getItem('stageName');
     this._onPopState = () => {
       this.route = this._getRoute();
     };
@@ -115,6 +118,10 @@ export class KaraokeApp extends LitElement {
 
   _onSessionCreated(e) {
     this.roomCode = e.detail.code;
+  }
+
+  _onLoggedIn(e) {
+    this.stageName = e.detail.name;
   }
 
   connectedCallback() {
@@ -171,6 +178,10 @@ export class KaraokeApp extends LitElement {
 
     if (!this.onboardingComplete) {
       return html`<onboarding-flow @onboarding-complete=${this._handleOnboardingComplete}></onboarding-flow>`;
+    }
+
+    if (this.route !== 'kj' && !this.stageName) {
+      return html`<login-form @login=${this._onLoggedIn}></login-form>`;
     }
 
     return html`
