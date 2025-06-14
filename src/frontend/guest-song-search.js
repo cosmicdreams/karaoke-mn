@@ -32,7 +32,10 @@ export class GuestSongSearch extends LitElement {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ videoId, singer: this.singer }),
       });
-      if (!res.ok) throw new Error(`Status ${res.status}`);
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `Status ${res.status}`);
+      }
       this._showToast(`Added to queue: ${title}`);
     } catch (err) {
       this._showToast(`Failed to add song: ${err.message}`);
@@ -49,9 +52,12 @@ export class GuestSongSearch extends LitElement {
       if (res.ok) {
         const info = await res.json();
         this.preview = info;
+      } else {
+        const err = await res.json().catch(() => ({}));
+        this._showToast(err.error || 'Failed to load preview');
       }
     } catch (err) {
-      console.error(err);
+      this._showToast(`Failed to load preview: ${err.message}`);
     }
   }
 

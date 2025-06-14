@@ -148,9 +148,16 @@ async function saveSingerProfile(profile) {
 }
 
 async function getVideoInfo(videoId) {
-  const resp = await youtube.videos.list({ part: 'snippet', id: videoId });
+  const resp = await youtube.videos.list({
+    part: 'snippet,status',
+    id: videoId,
+  });
   if (!resp.data.items.length) throw new Error('Video not found');
-  const snippet = resp.data.items[0].snippet;
+  const item = resp.data.items[0];
+  if (item.status && item.status.embeddable === false) {
+    throw new Error('Video not embeddable');
+  }
+  const snippet = item.snippet;
   return {
     videoId,
     title: snippet.title,
@@ -463,7 +470,7 @@ app.get('/preview', async (req, res) => {
     const info = await getVideoInfo(id);
     res.json(info);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(400).json({ error: err.message });
   }
 });
 
@@ -473,6 +480,7 @@ app.post('/songs', async (req, res) => {
   if (!id || !singer)
     return res.status(400).json({ error: 'Missing videoId or singer' });
   try {
+    await getVideoInfo(id); // validates existence and embeddability
     const song = addSong(id, singer);
     res.json(song);
   } catch (err) {
