@@ -31,4 +31,21 @@ describe('singer profiles', () => {
     expect(profile.body.history.length).toBe(1);
     expect(profile.body.history[0].videoId).toBe('VIDPROF1234');
   });
+
+  test('favorites can be saved and retrieved', async () => {
+    const session = await request(app).post('/sessions');
+    const { code } = session.body;
+    const joinRes = await request(app)
+      .post(`/sessions/${code}/join`)
+      .send({ name: 'Bob' });
+    const deviceId = joinRes.body.deviceId;
+
+    const favorites = [{ videoId: 'VIDFAV1', title: 'Fav Song' }];
+    await request(app)
+      .put(`/singers/${deviceId}`)
+      .send({ favorites });
+
+    const profile = await request(app).get(`/singers/${deviceId}`);
+    expect(profile.body.favorites).toEqual(favorites);
+  });
 });
