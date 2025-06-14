@@ -58,12 +58,12 @@
   - [x] 7.2 Display offline/network error states non-blocking.
   - [x] 7.3 Handle empty states (no results, empty queue).
 
-- [ ] 8.0 Frontend Cleanup & Removal of Obsolete Resources
+- [x] 8.0 Frontend Cleanup & Removal of Obsolete Resources
 
-  - [ ] 8.1 Audit `src/frontend/` for unused or legacy Lit components.
-  - [ ] 8.2 Delete deprecated component files (e.g., onboarding-flow.js, hello-lit.js).
-  - [ ] 8.3 Remove outdated Storybook stories and assets not aligned with new UI mocks.
-  - [ ] 8.4 Clean up static assets in `public/` that are no longer referenced.
+  - [x] 8.1 Audit `src/frontend/` for unused or legacy Lit components.
+  - [x] 8.2 Delete deprecated component files (e.g., onboarding-flow.js, hello-lit.js).
+  - [x] 8.3 Remove outdated Storybook stories and assets not aligned with new UI mocks.
+  - [x] 8.4 Clean up static assets in `public/` that are no longer referenced.
 
 - [ ] 9.0 Component Isolation & Testing with Storybook
   - [ ] 9.1 Configure Storybook 9 to load all Lit components from `src/frontend/`.
