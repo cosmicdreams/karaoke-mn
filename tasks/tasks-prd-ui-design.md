@@ -7,7 +7,7 @@
 - [x] 1.4 Add watermark component with join link in footer or corner.
 - [x] 1.5 Route full-screen video to `/<room-id>/play` and remove upcoming queue/main search UI from this view.
 
-- [ ] 2.0 Login / Splash Authentication Flow
+- [x] 2.0 Login / Splash Authentication Flow
 
   - [x] 2.1 Build `<login-form>` component with StageName input and confirm button.
   - [x] 2.2 Integrate WebAuthn passkey flows via `kjAuth.js`.
@@ -23,16 +23,16 @@
   - [x] 3.4 Add “Add to queue” action with toast feedback.
   - [x] 3.5 Develop `<popover-queue>` to show current + next singers and user’s queued songs.
   - [x] 3.6 Ensure Main Search screen UI matches design mock (Main-Search-Screen.jpg)
-  - [ ] 3.7 Validate embeddability of YouTube videos before preview/add and display an error if embedding is not allowed
+  - [x] 3.7 Validate embeddability of YouTube videos before preview/add and display an error if embedding is not allowed
 
-- [ ] 4.0 User Profile & Favorites Screen
+- [x] 4.0 User Profile & Favorites Screen
 
-  - [ ] 4.1 Build `<settings-profile>` view with inline StageName edit and Cloud Save badge.
-  - [ ] 4.2 Load and save favorites via Firestore.
-  - [ ] 4.3 Reuse `<search-bar-with-status>` and `<toggle-view-button>` for favorites.
-  - [ ] 4.4 Render favorites list with remove action.
-  - [ ] 4.5 Add sort controls (by song title / artist).
-  - [ ] 4.6 Ensure Profile & Favorites UI matches design mock (Profile-Favorites-Screen.jpg)
+  - [x] 4.1 Build `<settings-profile>` view with inline StageName edit and Cloud Save badge.
+  - [x] 4.2 Load and save favorites via Firestore.
+  - [x] 4.3 Reuse `<search-bar-with-status>` and `<toggle-view-button>` for favorites.
+  - [x] 4.4 Render favorites list with remove action.
+  - [x] 4.5 Add sort controls (by song title / artist).
+  - [x] 4.6 Ensure Profile & Favorites UI matches design mock (Profile-Favorites-Screen.jpg)
 
 - [ ] 5.0 Shared UI Components Extraction and Integration
 
