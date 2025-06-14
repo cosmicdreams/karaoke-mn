@@ -39,12 +39,12 @@ const mockDb = {
   }))
 };
 
-vi.mock('../firebase.js', () => ({ getFirestore: () => mockDb }));
+vi.mock('../../firebase.js', () => ({ getFirestore: () => mockDb }));
 
 beforeEach(async () => {
   vi.resetModules();
   process.env.YOUTUBE_API_KEY = 'test';
-  const mod = await import('../server.js');
+  const mod = await import('../../server.js');
   app = mod.default || mod;
 });
 

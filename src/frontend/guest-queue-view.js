@@ -40,7 +40,9 @@ export class GuestQueueView extends LitElement {
     return html`
       <h3>Your Songs</h3>
       <ul aria-label="Your queued songs">
-        ${this.queue.map((q) => html`<li>Song ID: ${q.videoId}</li>`)}
+        ${this.queue.length === 0
+          ? html`<li>No queued songs</li>`
+          : this.queue.map((q) => html`<li>Song ID: ${q.videoId}</li>`)}
       </ul>
     `;
   }

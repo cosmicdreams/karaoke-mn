@@ -54,9 +54,9 @@
   - [ ] 6.7 Document responsive examples in Storybook and verify breakpoints
         with screenshot tests.
 
-  - [ ] 7.1 Create `<error-banner>` for global messages.
-  - [ ] 7.2 Display offline/network error states non-blocking.
-  - [ ] 7.3 Handle empty states (no results, empty queue).
+  - [x] 7.1 Create `<error-banner>` for global messages.
+  - [x] 7.2 Display offline/network error states non-blocking.
+  - [x] 7.3 Handle empty states (no results, empty queue).
 
 - [ ] 8.0 Frontend Cleanup & Removal of Obsolete Resources
 

@@ -5,7 +5,7 @@ import request from 'supertest';
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
-vi.mock('../kjAuth.js', () => ({
+vi.mock('../../kjAuth.js', () => ({
   generateRegistration: vi.fn(),
   verifyRegistration: vi.fn(() => Promise.resolve(true)),
   generateAuth: vi.fn(),
@@ -18,7 +18,7 @@ let app;
 beforeEach(async () => {
   vi.resetModules();
   process.env.YOUTUBE_API_KEY = 'test';
-  const mod = await import('../server.js');
+  const mod = await import('../../server.js');
   app = mod.default || mod;
 });
 

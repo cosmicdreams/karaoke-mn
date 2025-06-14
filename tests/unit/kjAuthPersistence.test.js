@@ -30,13 +30,13 @@ function createDb() {
 describe('passkey persistence', () => {
   test('devices saved to firestore are loaded on init', async () => {
     const db = createDb();
-    let mod = await import('../kjAuth.js');
+    let mod = await import('../../kjAuth.js');
     await mod.initAuth(db);
     await mod.verifyRegistration({ rawId: 'cred' });
 
     // simulate server restart
     vi.resetModules();
-    mod = await import('../kjAuth.js');
+    mod = await import('../../kjAuth.js');
     await mod.initAuth(db);
     const opts = await mod.generateAuth();
     expect(opts.allowCredentials.length).toBeGreaterThan(0);
