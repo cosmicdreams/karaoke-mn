@@ -10,14 +10,14 @@ let app;
 beforeEach(async () => {
   vi.resetModules();
   process.env.YOUTUBE_API_KEY = 'test';
-  vi.mock('../kjAuth.js', () => ({
+  vi.mock('../../kjAuth.js', () => ({
     generateRegistration: vi.fn(),
     verifyRegistration: vi.fn(() => true),
     generateAuth: vi.fn(),
     verifyAuth: vi.fn(() => true),
     initAuth: vi.fn(() => Promise.resolve()),
   }));
-  const mod = await import('../server.js');
+  const mod = await import('../../server.js');
   app = mod.default || mod;
 });
 

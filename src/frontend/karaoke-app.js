@@ -9,6 +9,7 @@ import './main-screen-view.js';
 import './settings-profile.js';
 import './onboarding-flow.js';
 import './login-form.js';
+import './error-banner.js';
 
 class KJView extends LitElement {
   static properties = {
@@ -103,6 +104,8 @@ export class KaraokeApp extends LitElement {
     onboardingComplete: { state: true },
     roomCode: { state: true },
     stageName: { state: true },
+    bannerMessage: { state: true },
+    bannerOpen: { state: true },
   };
 
   constructor() {
@@ -111,8 +114,21 @@ export class KaraokeApp extends LitElement {
     this.onboardingComplete = localStorage.getItem('onboardingComplete') === 'true';
     this.roomCode = null;
     this.stageName = localStorage.getItem('stageName');
+    this.bannerMessage = '';
+    this.bannerOpen = false;
     this._onPopState = () => {
       this.route = this._getRoute();
+    };
+    this._updateNetworkStatus = () => {
+      if (!navigator.onLine) {
+        this.bannerMessage = 'Network connection lost';
+        this.bannerOpen = true;
+      } else if (this.bannerOpen && this.bannerMessage === 'Network connection lost') {
+        this.bannerMessage = 'Back online';
+        this.bannerOpen = true;
+        clearTimeout(this._bannerTimer);
+        this._bannerTimer = setTimeout(() => (this.bannerOpen = false), 3000);
+      }
     };
   }
 
@@ -128,11 +144,16 @@ export class KaraokeApp extends LitElement {
     super.connectedCallback();
     window.addEventListener('popstate', this._onPopState);
     this.addEventListener('session-created', this._onSessionCreated);
+    window.addEventListener('online', this._updateNetworkStatus);
+    window.addEventListener('offline', this._updateNetworkStatus);
+    this._updateNetworkStatus();
   }
 
   disconnectedCallback() {
     window.removeEventListener('popstate', this._onPopState);
     this.removeEventListener('session-created', this._onSessionCreated);
+    window.removeEventListener('online', this._updateNetworkStatus);
+    window.removeEventListener('offline', this._updateNetworkStatus);
     super.disconnectedCallback();
   }
 
@@ -185,6 +206,10 @@ export class KaraokeApp extends LitElement {
     }
 
     return html`
+      <error-banner
+        .message=${this.bannerMessage}
+        ?open=${this.bannerOpen}
+      ></error-banner>
       <nav>
         <a @click=${() => this._navigate('/admin')}>KJ</a>
         <a @click=${() => this._navigate('/')}>Guest</a>

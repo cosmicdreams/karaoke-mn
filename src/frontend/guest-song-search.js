@@ -13,6 +13,7 @@ export class GuestSongSearch extends LitElement {
     results: { state: true },
     singer: { type: String },
     preview: { state: true },
+    searched: { state: true },
   };
 
   constructor() {
@@ -20,10 +21,12 @@ export class GuestSongSearch extends LitElement {
     this.results = [];
     this.singer = '';
     this.preview = null;
+    this.searched = false;
   }
 
   _handleResults(e) {
     this.results = Array.isArray(e.detail) ? e.detail : [];
+    this.searched = true;
   }
 
   async _addSong(e) {
@@ -106,6 +109,7 @@ export class GuestSongSearch extends LitElement {
       ></search-bar-with-status>
       <search-results-list
         .results=${this.results}
+        .searched=${this.searched}
         @add-song=${this._addSong}
         @save-song=${this._saveSong}
         @preview-song=${this._previewSong}

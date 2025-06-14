@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import { getFairQueue } from '../fairPlay.js';
+import { getFairQueue } from '../../fairPlay.js';
 
 describe('getFairQueue', () => {
   test('new singer prioritized in phase 1', () => {

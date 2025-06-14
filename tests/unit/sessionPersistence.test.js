@@ -54,9 +54,9 @@ let app;
 beforeEach(async () => {
   vi.resetModules();
   db = createDb();
-  vi.mock('../firebase.js', () => ({ getFirestore: () => db }));
+  vi.mock('../../firebase.js', () => ({ getFirestore: () => db }));
   process.env.YOUTUBE_API_KEY = 'test';
-  const mod = await import('../server.js');
+  const mod = await import('../../server.js');
   app = mod.default || mod;
 });
 
@@ -70,8 +70,8 @@ describe('session persistence', () => {
     expect(first.body.queue.length).toBe(1);
 
     vi.resetModules();
-    vi.mock('../firebase.js', () => ({ getFirestore: () => db }));
-    const mod2 = await import('../server.js');
+    vi.mock('../../firebase.js', () => ({ getFirestore: () => db }));
+    const mod2 = await import('../../server.js');
     const app2 = mod2.default || mod2;
     const second = await request(app2).get('/queue');
     expect(second.body.queue.length).toBe(1);
