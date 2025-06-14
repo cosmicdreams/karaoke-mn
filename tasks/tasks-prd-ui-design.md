@@ -65,11 +65,11 @@
   - [x] 8.3 Remove outdated Storybook stories and assets not aligned with new UI mocks.
   - [x] 8.4 Clean up static assets in `public/` that are no longer referenced.
 
-- [ ] 9.0 Component Isolation & Testing with Storybook
-  - [ ] 9.1 Configure Storybook 9 to load all Lit components from `src/frontend/`.
-  - [ ] 9.2 Write stories for components completed in tasks 2–4 (`<login-form>`, `<search-bar-with-status>`, `<toggle-view-button>`, `<search-results-list>`, `<popover-queue>`, `<settings-profile>`).
-  - [ ] 9.3 Develop Storybook-driven tests for these components using Storybook 9’s testing API and verify accessibility.
-  - [ ] 9.4 Integrate Storybook test runs into CI.
+- [x] 9.0 Component Isolation & Testing with Storybook
+  - [x] 9.1 Configure Storybook 9 to load all Lit components from `src/frontend/`.
+  - [x] 9.2 Write stories for components completed in tasks 2–4 (`<login-form>`, `<search-bar-with-status>`, `<toggle-view-button>`, `<search-results-list>`, `<popover-queue>`, `<settings-profile>`).
+  - [x] 9.3 Develop Storybook-driven tests for these components using Storybook 9’s testing API and verify accessibility.
+  - [x] 9.4 Integrate Storybook test runs into CI.
 
 I have generated the high-level tasks based on the UI Design PRD.
 Refer to **Relevant Files** below before starting implementation.
