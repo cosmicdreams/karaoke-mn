@@ -1,4 +1,5 @@
 import { LitElement, html, css } from 'lit';
+import { surfaceStyles } from '../shared/theme-utils.js';
 
 function base64urlToUint8Array(base64url) {
   const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
@@ -129,38 +130,50 @@ export class LoginForm extends LitElement {
     `;
   }
 
-  static styles = css`
-    :host {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      background: var(--bg-color);
-      color: var(--text-color);
-    }
-    .container {
-      background: var(--surface-color);
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-      text-align: center;
-    }
-    input {
-      padding: 0.5rem;
-      margin-top: 0.5rem;
-      border-radius: 4px;
-      border: 1px solid var(--surface-color);
-      width: 100%;
-      box-sizing: border-box;
-    }
-    button {
-      margin-top: 1rem;
-    }
-    .error {
-      color: #ff5252;
-      margin-top: 0.5rem;
-    }
-  `;
+  static styles = [
+    surfaceStyles,
+    css`
+      :host {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background: var(--bg-color);
+        color: var(--text-color);
+        padding: var(--spacing-md);
+        box-sizing: border-box;
+      }
+      .container {
+        background: var(--surface-color);
+        padding: var(--spacing-lg);
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        text-align: center;
+      }
+      input {
+        padding: var(--spacing-sm);
+        margin-top: var(--spacing-sm);
+        border-radius: 4px;
+        border: 1px solid var(--surface-color);
+        width: 100%;
+        box-sizing: border-box;
+      }
+      button {
+        margin-top: var(--spacing-md);
+      }
+      .error {
+        color: #ff5252;
+        margin-top: var(--spacing-sm);
+      }
+
+      @media (orientation: landscape) and (max-width: var(--breakpoint-phone)) {
+        .container {
+          width: 100%;
+          border-radius: 0;
+        }
+      }
+    `,
+  ];
 }
 
 customElements.define('login-form', LoginForm);

@@ -1,4 +1,5 @@
 import { LitElement, html, css } from 'lit';
+import { spacingStyles } from '../shared/theme-utils.js';
 import './popover-queue.js';
 import './search-bar-with-status.js';
 import './search-results-list.js';
@@ -75,11 +76,25 @@ export class GuestSongSearch extends LitElement {
     );
   }
 
-  static styles = css`
-    :host {
-      display: block;
-    }
-  `;
+  static styles = [
+    spacingStyles,
+    css`
+      :host {
+        display: block;
+      }
+
+      .controls {
+        margin-bottom: var(--spacing-md);
+      }
+
+      @media (min-width: var(--breakpoint-tv)) {
+        :host {
+          max-width: 1024px;
+          margin: 0 auto;
+        }
+      }
+    `,
+  ];
 
   render() {
     return html`

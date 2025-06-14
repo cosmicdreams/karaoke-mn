@@ -1,4 +1,5 @@
 import { LitElement, html, css } from 'lit';
+import { spacingStyles } from '../shared/theme-utils.js';
 import './search-bar-with-status.js';
 import './search-results-list.js';
 import './toggle-view-button.js';
@@ -96,16 +97,18 @@ export class SettingsProfile extends LitElement {
     this._saveProfile();
   }
 
-  static styles = css`
-    :host {
-      display: block;
-      padding: 1rem;
-    }
-    .badge {
-      margin-left: 0.5rem;
-      font-size: 0.9rem;
-      color: var(--text-color);
-    }
+  static styles = [
+    spacingStyles,
+    css`
+      :host {
+        display: block;
+        padding: var(--spacing-md);
+      }
+      .badge {
+        margin-left: var(--spacing-sm);
+        font-size: 0.9rem;
+        color: var(--text-color);
+      }
     ul {
       list-style: none;
       padding: 0;
@@ -114,12 +117,20 @@ export class SettingsProfile extends LitElement {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.25rem 0;
+      padding: calc(var(--spacing-sm) / 2) 0;
     }
     button {
-      margin-left: 0.5rem;
+      margin-left: var(--spacing-sm);
     }
-  `;
+
+      @media (min-width: var(--breakpoint-tablet)) {
+        :host {
+          max-width: 600px;
+          margin: 0 auto;
+        }
+      }
+    `,
+  ];
 
   render() {
     return html`
