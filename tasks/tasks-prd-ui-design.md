@@ -15,14 +15,15 @@
   - [x] 2.4 Redirect or display errors based on authentication result.
   - [x] 2.5 Ensure Login/Splash UI matches design mock (Login-Splash-Screen.jpg)
 
-- [ ] 3.0 Main Search Screen Layout and Components
+- [x] 3.0 Main Search Screen Layout and Components
 
   - [x] 3.1 Integrate `<search-bar-with-status>` bound to `/search?q=` API.
   - [x] 3.2 Implement `<toggle-view-button>` for grid/list modes.
   - [x] 3.3 Create `<search-results-list>` for grid and list templates.
   - [x] 3.4 Add “Add to queue” action with toast feedback.
   - [x] 3.5 Develop `<popover-queue>` to show current + next singers and user’s queued songs.
-  - [ ] 3.6 Ensure Main Search screen UI matches design mock (Main-Search-Screen.jpg)
+  - [x] 3.6 Ensure Main Search screen UI matches design mock (Main-Search-Screen.jpg)
+  - [ ] 3.7 Validate embeddability of YouTube videos before preview/add and display an error if embedding is not allowed
 
 - [ ] 4.0 User Profile & Favorites Screen
 

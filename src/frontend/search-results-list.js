@@ -1,4 +1,5 @@
 import { LitElement, html, css } from 'lit';
+import './toggle-view-button.js';
 import './search-result-item.js';
 
 export class SearchResultsList extends LitElement {
@@ -10,6 +11,7 @@ export class SearchResultsList extends LitElement {
   constructor() {
     super();
     this.results = [];
+    this.viewMode = 'list';
   }
 
   static styles = css`
@@ -31,25 +33,33 @@ export class SearchResultsList extends LitElement {
 
   render() {
     return html`
+      <div class="controls">
+        <toggle-view-button
+          .mode=${this.viewMode}
+          @toggle=${(e) => (this.viewMode = e.detail)}
+        ></toggle-view-button>
+      </div>
       ${this.viewMode === 'grid'
         ? html`<div class="grid">
             ${this.results.map(
-              (r) => html`<search-result-item
-                .result=${r}
-                @add-song=${(e) => this.dispatchEvent(e)}
-                @save-song=${(e) => this.dispatchEvent(e)}
-                @preview-song=${(e) => this.dispatchEvent(e)}
-              ></search-result-item>`,
+              (r) =>
+                html`<search-result-item
+                  .result=${r}
+                  @add-song=${(e) => this.dispatchEvent(e)}
+                  @save-song=${(e) => this.dispatchEvent(e)}
+                  @preview-song=${(e) => this.dispatchEvent(e)}
+                ></search-result-item>`,
             )}
           </div>`
         : html`<ul>
             ${this.results.map(
-              (r) => html`<search-result-item
-                .result=${r}
-                @add-song=${(e) => this.dispatchEvent(e)}
-                @save-song=${(e) => this.dispatchEvent(e)}
-                @preview-song=${(e) => this.dispatchEvent(e)}
-              ></search-result-item>`,
+              (r) =>
+                html`<search-result-item
+                  .result=${r}
+                  @add-song=${(e) => this.dispatchEvent(e)}
+                  @save-song=${(e) => this.dispatchEvent(e)}
+                  @preview-song=${(e) => this.dispatchEvent(e)}
+                ></search-result-item>`,
             )}
           </ul>`}
     `;

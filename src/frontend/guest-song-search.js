@@ -1,6 +1,5 @@
 import { LitElement, html, css } from 'lit';
 import './popover-queue.js';
-import './toggle-view-button.js';
 import './search-bar-with-status.js';
 import './search-results-list.js';
 import './video-preview-modal.js';
@@ -11,7 +10,6 @@ export class GuestSongSearch extends LitElement {
     results: { state: true },
     singer: { type: String },
     preview: { state: true },
-    viewMode: { state: true },
   };
 
   constructor() {
@@ -19,7 +17,6 @@ export class GuestSongSearch extends LitElement {
     this.results = [];
     this.singer = '';
     this.preview = null;
-    this.viewMode = 'list';
   }
 
   _handleResults(e) {
@@ -82,12 +79,12 @@ export class GuestSongSearch extends LitElement {
     return html`
       <div class="controls">
         <popover-queue .singer=${this.singer}></popover-queue>
-        <toggle-view-button .mode=${this.viewMode} @toggle=${e => (this.viewMode = e.detail)}></toggle-view-button>
       </div>
-      <search-bar-with-status @results=${this._handleResults}></search-bar-with-status>
+      <search-bar-with-status
+        @results=${this._handleResults}
+      ></search-bar-with-status>
       <search-results-list
         .results=${this.results}
-        .viewMode=${this.viewMode}
         @add-song=${this._addSong}
         @save-song=${this._saveSong}
         @preview-song=${this._previewSong}
