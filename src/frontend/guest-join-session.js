@@ -54,8 +54,9 @@ export class GuestJoinSession extends LitElement {
         },
       );
       const data = await res.json();
-      if (res.ok) {
-        localStorage.setItem(key, data.deviceId);
+        if (res.ok) {
+          localStorage.setItem(key, data.deviceId);
+          localStorage.setItem('karaoke-mn-deviceId', data.deviceId);
         this.message = `Joined session as ${this.name}`;
         this._showToast(this.message);
         this.dispatchEvent(

@@ -134,7 +134,8 @@ async function loadSingerProfile(deviceId) {
   if (!db) return null;
   const doc = await db.collection('singerProfiles').doc(deviceId).get();
   if (!doc.exists) return null;
-  const profile = { id: deviceId, ...doc.data() };
+  const profile = { id: deviceId, favorites: [], ...doc.data() };
+  if (!Array.isArray(profile.favorites)) profile.favorites = [];
   singerProfiles[deviceId] = profile;
   return profile;
 }
@@ -206,15 +207,16 @@ async function joinSession(code, name, deviceId) {
     singer = { id: uuidv4(), name, deviceId };
     singers[session.id].push(singer);
     if (!singerStats[singer.name]) singerStats[singer.name] = { songsSung: 0 };
-    let profile =
-      (await loadSingerProfile(deviceId)) ||
-      {
-        id: deviceId,
-        name,
-        rating: 0,
-        history: [],
-        notes: '',
-      };
+      let profile =
+        (await loadSingerProfile(deviceId)) ||
+        {
+          id: deviceId,
+          name,
+          rating: 0,
+          history: [],
+          favorites: [],
+          notes: '',
+        };
     profile.name = name;
     await saveSingerProfile(profile);
   } else {
@@ -711,19 +713,21 @@ app.get('/singers/:deviceId', async (req, res) => {
 app.put('/singers/:deviceId', async (req, res) => {
   const { deviceId } = req.params;
   try {
-    let profile =
-      singerProfiles[deviceId] ||
-      (await loadSingerProfile(deviceId)) || {
-        id: deviceId,
-        name: '',
-        rating: 0,
-        history: [],
-        notes: '',
-      };
-    if (req.body.rating !== undefined) profile.rating = req.body.rating;
-    if (req.body.notes !== undefined) profile.notes = req.body.notes;
-    await saveSingerProfile(profile);
-    res.json(profile);
+      let profile =
+        singerProfiles[deviceId] ||
+        (await loadSingerProfile(deviceId)) || {
+          id: deviceId,
+          name: '',
+          rating: 0,
+          history: [],
+          favorites: [],
+          notes: '',
+        };
+      if (req.body.rating !== undefined) profile.rating = req.body.rating;
+      if (req.body.notes !== undefined) profile.notes = req.body.notes;
+      if (req.body.favorites !== undefined) profile.favorites = req.body.favorites;
+      await saveSingerProfile(profile);
+      res.json(profile);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
