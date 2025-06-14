@@ -1,5 +1,8 @@
 import { LitElement, html, css } from 'lit';
-import { spacingStyles } from '../shared/theme-utils.js';
+import {
+  spacingStyles,
+  mobileLandscapeStyles,
+} from '../shared/theme-utils.js';
 import './popover-queue.js';
 import './search-bar-with-status.js';
 import './search-results-list.js';
@@ -81,6 +84,7 @@ export class GuestSongSearch extends LitElement {
 
   static styles = [
     spacingStyles,
+    mobileLandscapeStyles,
     css`
       :host {
         display: block;
@@ -88,6 +92,13 @@ export class GuestSongSearch extends LitElement {
 
       .controls {
         margin-bottom: var(--spacing-md);
+      }
+
+      @media (orientation: landscape) and (max-width: var(--breakpoint-phone)) {
+        .controls {
+          display: flex;
+          justify-content: space-between;
+        }
       }
 
       @media (min-width: var(--breakpoint-tv)) {

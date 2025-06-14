@@ -1,5 +1,8 @@
 import { LitElement, html, css } from 'lit';
-import { surfaceStyles } from '../shared/theme-utils.js';
+import {
+  containerStyles,
+  mobileLandscapeStyles,
+} from '../shared/theme-utils.js';
 
 function base64urlToUint8Array(base64url) {
   const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
@@ -131,7 +134,8 @@ export class LoginForm extends LitElement {
   }
 
   static styles = [
-    surfaceStyles,
+    containerStyles,
+    mobileLandscapeStyles,
     css`
       :host {
         display: flex;
@@ -144,10 +148,6 @@ export class LoginForm extends LitElement {
         box-sizing: border-box;
       }
       .container {
-        background: var(--surface-color);
-        padding: var(--spacing-lg);
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         text-align: center;
       }
       input {
@@ -162,15 +162,8 @@ export class LoginForm extends LitElement {
         margin-top: var(--spacing-md);
       }
       .error {
-        color: #ff5252;
+        color: var(--error-color);
         margin-top: var(--spacing-sm);
-      }
-
-      @media (orientation: landscape) and (max-width: var(--breakpoint-phone)) {
-        .container {
-          width: 100%;
-          border-radius: 0;
-        }
       }
     `,
   ];
