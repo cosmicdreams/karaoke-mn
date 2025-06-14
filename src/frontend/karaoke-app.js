@@ -167,7 +167,7 @@ export class KaraokeApp extends LitElement {
     }
     nav a {
       cursor: pointer;
-      color: #00bcd4;
+      color: var(--accent-color);
     }
   `;
 

@@ -27,7 +27,7 @@ export class ToggleViewButton extends LitElement {
       cursor: pointer;
       font-size: 1rem;
       padding: 0.25rem;
-      color: var(--primary-color, #1976d2);
+      color: var(--accent-color);
     }
     button[active] {
       font-weight: bold;

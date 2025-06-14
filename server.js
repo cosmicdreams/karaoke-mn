@@ -7,7 +7,7 @@ import { google } from 'googleapis';
 import { getFirestore } from './firebase.js';
 import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
 import QRCode from 'qrcode';
-import { parseVideoId } from './parseVideoId.js';
+import { parseVideoId } from './src/shared/parseVideoId.js';
 import { getFairQueue } from './fairPlay.js';
 import {
   generateRegistration,

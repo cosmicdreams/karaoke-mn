@@ -5,8 +5,8 @@ class HelloLit extends LitElement {
     :host {
       display: block;
       padding: 1rem;
-      background: #222;
-      color: #fff;
+      background: var(--surface-color);
+      color: var(--text-color);
     }
   `;
 

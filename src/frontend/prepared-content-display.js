@@ -18,7 +18,7 @@ export class PreparedContentDisplay extends LitElement {
       text-align: left;
       margin: 1rem auto;
       max-width: 600px;
-      background: #fafafa;
+      background: var(--surface-color);
       padding: 0.5rem;
       border-radius: 4px;
     }

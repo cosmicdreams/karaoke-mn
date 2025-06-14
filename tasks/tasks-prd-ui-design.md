@@ -34,11 +34,11 @@
   - [ ] 4.5 Add sort controls (by song title / artist).
   - [ ] 4.6 Ensure Profile & Favorites UI matches design mock (Profile-Favorites-Screen.jpg)
 
-- [ ] 5.0 Shared UI Components Extraction and Integration
+- [x] 5.0 Shared UI Components Extraction and Integration
 
-  - [ ] 5.1 Refine `parseVideoId.js` import into preview and search components.
-  - [ ] 5.2 Extract shared helpers (date formatting, toasts) into `src/shared/`.
-  - [ ] 5.3 Consume CSS variables & tokens from `app-theme.js` in components.
+  - [x] 5.1 Refine `parseVideoId.js` import into preview and search components.
+  - [x] 5.2 Extract shared helpers (date formatting, toasts) into `src/shared/`.
+  - [x] 5.3 Consume CSS variables & tokens from `app-theme.js` in components.
 
 - [ ] 6.0 Theming and Responsive Layout Updates
 

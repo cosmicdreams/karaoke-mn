@@ -5,7 +5,7 @@ class OnboardingFlow extends LitElement {
     :host {
       display: block;
       padding: 20px;
-      background-color: #f0f0f0;
+      background-color: var(--surface-color);
       border-radius: 8px;
       text-align: center;
       max-width: 500px;
@@ -13,17 +13,17 @@ class OnboardingFlow extends LitElement {
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
     h2 {
-      color: #333;
+      color: var(--text-color);
       margin-bottom: 15px;
     }
     p {
-      color: #666;
+      color: var(--text-color);
       line-height: 1.6;
       margin-bottom: 20px;
     }
     button {
-      background-color: #00bcd4;
-      color: white;
+      background-color: var(--accent-color);
+      color: var(--text-color);
       border: none;
       padding: 10px 20px;
       border-radius: 5px;
@@ -32,7 +32,7 @@ class OnboardingFlow extends LitElement {
       transition: background-color 0.3s ease;
     }
     button:hover {
-      background-color: #0097a7;
+      background-color: var(--accent-color);
     }
   `;
 

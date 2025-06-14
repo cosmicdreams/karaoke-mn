@@ -27,8 +27,8 @@ export class PopoverQueue extends LitElement {
       position: absolute;
       top: 100%;
       right: 0;
-      background: white;
-      border: 1px solid #ccc;
+      background: var(--surface-color);
+      border: 1px solid var(--surface-color);
       border-radius: 4px;
       padding: 0.5rem;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);

@@ -27,7 +27,7 @@ export class MainQueueItem extends LitElement {
       font-weight: bold;
     }
     em {
-      color: #666;
+      color: var(--text-color);
     }
   `;
 

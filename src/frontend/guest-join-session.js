@@ -1,5 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import './toast-notification.js';
+import { showToast } from '../shared/toast.js';
 
 export class GuestJoinSession extends LitElement {
   static properties = {
@@ -30,12 +31,6 @@ export class GuestJoinSession extends LitElement {
     this.name = e.target.value;
   }
 
-  _showToast(msg) {
-    const toast = this.renderRoot?.getElementById('toast');
-    if (toast) {
-      toast.show(msg);
-    }
-  }
 
   async _join() {
     if (!this.code || !this.name) return;
@@ -58,7 +53,7 @@ export class GuestJoinSession extends LitElement {
           localStorage.setItem(key, data.deviceId);
           localStorage.setItem('karaoke-mn-deviceId', data.deviceId);
         this.message = `Joined session as ${this.name}`;
-        this._showToast(this.message);
+        showToast(this.renderRoot, this.message, 'toast');
         this.dispatchEvent(
           new CustomEvent('session-joined', {
             detail: { ...data, code: this.code, name: this.name.trim() },
@@ -68,11 +63,11 @@ export class GuestJoinSession extends LitElement {
         );
       } else {
         this.message = data.error || 'Join failed';
-        this._showToast(this.message);
+        showToast(this.renderRoot, this.message, 'toast');
       }
     } catch (err) {
       this.message = err.message;
-      this._showToast(this.message);
+      showToast(this.renderRoot, this.message, 'toast');
     }
   }
 
@@ -89,7 +84,7 @@ export class GuestJoinSession extends LitElement {
       padding: 0.5rem 1rem;
     }
     p {
-      color: #f44336;
+      color: var(--accent-color);
     }
   `;
 
