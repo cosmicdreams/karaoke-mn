@@ -100,7 +100,6 @@ customElements.define('guest-view', GuestView);
 export class KaraokeApp extends LitElement {
   static properties = {
     route: { state: true },
-    roomCode: { state: true },
     stageName: { state: true },
     bannerMessage: { state: true },
     bannerOpen: { state: true },
@@ -109,7 +108,6 @@ export class KaraokeApp extends LitElement {
   constructor() {
     super();
     this.route = this._getRoute();
-    this.roomCode = null;
     this.stageName = localStorage.getItem('stageName');
     this.bannerMessage = '';
     this.bannerOpen = false;
@@ -129,10 +127,6 @@ export class KaraokeApp extends LitElement {
     };
   }
 
-  _onSessionCreated(e) {
-    this.roomCode = e.detail.code;
-  }
-
   _onLoggedIn(e) {
     this.stageName = e.detail.name;
   }
@@ -140,7 +134,6 @@ export class KaraokeApp extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     window.addEventListener('popstate', this._onPopState);
-    this.addEventListener('session-created', this._onSessionCreated);
     window.addEventListener('online', this._updateNetworkStatus);
     window.addEventListener('offline', this._updateNetworkStatus);
     this._updateNetworkStatus();
@@ -148,7 +141,6 @@ export class KaraokeApp extends LitElement {
 
   disconnectedCallback() {
     window.removeEventListener('popstate', this._onPopState);
-    this.removeEventListener('session-created', this._onSessionCreated);
     window.removeEventListener('online', this._updateNetworkStatus);
     window.removeEventListener('offline', this._updateNetworkStatus);
     super.disconnectedCallback();
@@ -156,12 +148,9 @@ export class KaraokeApp extends LitElement {
 
   _getRoute() {
     const path = window.location.pathname;
-    const playMatch = path.match(/^\/([^/]+)\/play/);
-    if (playMatch) {
-      this.roomCode = playMatch[1];
-      return 'play';
-    }
-    if (path === '/' || path.startsWith('/guest')) return 'guest';
+    if (path === '/login') return 'login';
+    if (path === '/') return 'search';
+    if (path.startsWith('/guest')) return 'guest';
     if (path.startsWith('/admin')) return 'kj';
     if (path.startsWith('/settings')) return 'settings';
     return 'guest';
@@ -186,11 +175,28 @@ export class KaraokeApp extends LitElement {
   `;
 
   render() {
-    if (this.route === 'play') {
-      return html`<main-screen-view .roomCode=${this.roomCode}></main-screen-view>`;
+    if (this.route === 'login') {
+      return html`<guest-join-session @join=${(e) => this._onUserJoin(e)}></guest-join-session>`;
     }
 
-    if (this.route !== 'kj' && !this.stageName) {
+    if (this.route === 'search') {
+      return html`
+        <error-banner
+          .message=${this.bannerMessage}
+          ?open=${this.bannerOpen}
+        ></error-banner>
+        <nav>
+          <a @click=${() => this._navigate('/admin')}>KJ</a>
+          <a @click=${() => this._navigate('/')}>Search</a>
+          <a @click=${() => this._navigate('/login')}>Login</a>
+          <a @click=${() => this._navigate('/settings')}>Settings</a>
+        </nav>
+        <guest-song-search .singer=${'Guest'}></guest-song-search>
+      `;
+    }
+
+    // For KJ route, show login if not authenticated
+    if (this.route === 'kj' && !this.stageName) {
       return html`<login-form @login=${this._onLoggedIn}></login-form>`;
     }
 
@@ -201,11 +207,8 @@ export class KaraokeApp extends LitElement {
       ></error-banner>
       <nav>
         <a @click=${() => this._navigate('/admin')}>KJ</a>
-        <a @click=${() => this._navigate('/')}>Guest</a>
-        <a
-          ?disabled=${!this.roomCode}
-          @click=${() => this.roomCode && this._navigate(`/${this.roomCode}/play`)}
-        >Play</a>
+        <a @click=${() => this._navigate('/')}>Search</a>
+        <a @click=${() => this._navigate('/login')}>Login</a>
         <a @click=${() => this._navigate('/settings')}>Settings</a>
       </nav>
       ${this.route === 'kj'
@@ -214,6 +217,14 @@ export class KaraokeApp extends LitElement {
           ? html`<guest-view></guest-view>`
           : html`<settings-profile></settings-profile>`}
     `;
+  }
+
+  _onUserJoin(e) {
+    // Handle successful user login/join
+    const { username, deviceId } = e.detail;
+    this.stageName = username;
+    localStorage.setItem('stageName', username);
+    this._navigate('/guest');
   }
 }
 

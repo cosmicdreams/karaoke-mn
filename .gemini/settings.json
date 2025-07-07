@@ -1,0 +1,22 @@
+{
+  "context": {
+    "files": [
+      "Agents.md",
+      "CLAUDE.md",
+      "frontend-lit.md",
+      "frontend-tasks.md",
+      "README.md",
+      "ai/PASSKEYS.md",
+      "ai/prd-composite.md",
+      "ai/backup/frontend-lit.md",
+      "ai/backup/frontend-tasks.md",
+      "ai/backup/PRD.md",
+      "ai/backup/Tasks.md",
+      "ai/ui-mockups/UI.md",
+      "tasks/prd-karafun-like-frontend.md",
+      "tasks/prd-ui-design.md",
+      "tasks/tasks-prd-karafun-like-frontend.md",
+      "tasks/tasks-prd-ui-design.md"
+    ]
+  }
+}

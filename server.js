@@ -40,6 +40,17 @@ function isLoggedIn(req) {
   return cookies.kjSession === '1';
 }
 
+function requireLocalhost(req, res, next) {
+  const clientIP = req.ip || req.connection.remoteAddress || req.socket.remoteAddress;
+  const isLocalhost = clientIP === '127.0.0.1' || clientIP === '::1' || clientIP === '::ffff:127.0.0.1';
+  
+  if (isLocalhost) {
+    next();
+  } else {
+    res.status(403).json({ error: 'Admin access restricted to localhost only' });
+  }
+}
+
 // Serve static files for the Lit UI first
 app.use(express.static(path.join(__dirname, 'public', 'dist')));
 // Serve legacy/admin static files
@@ -91,6 +102,55 @@ app.post('/auth/login/verify', async (req, res) => {
   }
 });
 
+// User authentication endpoints (simplified for single room)
+app.post('/auth/user/login', async (req, res) => {
+  try {
+    const { username } = req.body;
+    
+    if (!username) {
+      return res.status(400).json({ error: 'Username is required' });
+    }
+    
+    // Generate device ID for this user
+    const deviceId = uuidv4();
+    const roomCode = 'DEFAULT';
+    
+    // Set user session
+    req.session.userId = deviceId;
+    req.session.username = username;
+    req.session.roomCode = roomCode;
+    
+    res.json({ 
+      success: true, 
+      deviceId: deviceId,
+      username: username,
+      roomCode: roomCode
+    });
+    
+  } catch (err) {
+    console.error('User login error:', err.message);
+    res.status(500).json({ error: 'Login failed' });
+  }
+});
+
+app.get('/auth/user/session', (req, res) => {
+  if (req.session.userId && req.session.username && req.session.roomCode) {
+    res.json({
+      authenticated: true,
+      deviceId: req.session.userId,
+      username: req.session.username,
+      roomCode: req.session.roomCode
+    });
+  } else {
+    res.json({ authenticated: false });
+  }
+});
+
+app.post('/auth/user/logout', (req, res) => {
+  req.session.destroy();
+  res.json({ success: true });
+});
+
 const apiKey = process.env.YOUTUBE_API_KEY;
 if (!apiKey) {
   console.error('Missing YOUTUBE_API_KEY environment variable');
@@ -106,6 +166,18 @@ let db;
     await restoreLatestSession();
   } catch (err) {
     console.error('Error restoring session:', err.message);
+  }
+  
+  // Ensure default session exists
+  const defaultSession = Object.values(sessions).find(s => s.code === 'DEFAULT');
+  if (!defaultSession) {
+    try {
+      await createDefaultSession();
+    } catch (err) {
+      console.error('Error creating default session:', err.message);
+    }
+  } else {
+    console.log('Default session already exists');
   }
 
   const port = process.env.PORT || 3000;
@@ -125,6 +197,7 @@ let singerStats = {};
 let singerProfiles = {};
 let phase2Start = null;
 let paused = false;
+let userCredentials = {}; // Store username/passcode pairs for rejoining
 
 async function saveSessionState() {
   if (!db || !currentSession) return;
@@ -171,30 +244,26 @@ async function getVideoInfo(videoId) {
   };
 }
 
-function generateRoomCode() {
-  const words1 = ['PURPLE', 'GOLD', 'SILVER', 'CRIMSON', 'JADE'];
-  const words2 = ['RAIN', 'SUN', 'MOON', 'STAR', 'SONG'];
-  const w1 = words1[Math.floor(Math.random() * words1.length)];
-  const w2 = words2[Math.floor(Math.random() * words2.length)];
-  return `${w1}-${w2}`;
-}
 
 async function fetchPreparedContent() {
   const url = process.env.DRUPAL_CONTENT_URL;
-  if (!url) return null;
+  if (!url) {
+    console.info('DRUPAL_CONTENT_URL not set; skipping prepared content fetch');
+    return null;
+  }
   try {
     const resp = await fetch(url);
     if (!resp.ok) throw new Error(`Drupal request failed: ${resp.status}`);
     return await resp.json();
   } catch (err) {
-    console.error('Error fetching Drupal content:', err);
+    console.warn('Could not fetch Drupal content; continuing without it:', err.message);
     return null;
   }
 }
 
 async function createSession() {
   const id = uuidv4();
-  const code = generateRoomCode();
+  const code = 'DEFAULT';
   const preparedContent = await fetchPreparedContent();
   const session = { id, code, preparedContent, createdAt: Date.now() };
   sessions[id] = session;
@@ -206,19 +275,33 @@ async function createSession() {
   return session;
 }
 
-async function joinSession(code, name, deviceId) {
-  const session = Object.values(sessions).find((s) => s.code === code);
-  if (!session) throw new Error('Invalid room code');
+async function createDefaultSession() {
+  const id = uuidv4();
+  const code = 'DEFAULT';
+  const preparedContent = await fetchPreparedContent();
+  const session = { id, code, preparedContent, createdAt: Date.now(), isDefault: true };
+  sessions[id] = session;
+  currentSession = session;
+  if (db) {
+    await db.collection('sessions').doc(id).set(session);
+    await saveSessionState();
+  }
+  console.log(`Default session created with code: ${code}`);
+  return session;
+}
+
+async function joinSession(name, deviceId) {
+  if (!currentSession) throw new Error('No active session');
   if (!name) throw new Error('Missing singer name');
   if (deviceId && !uuidValidate(deviceId)) {
     throw new Error('Invalid deviceId format');
   }
   if (!deviceId) deviceId = uuidv4();
-  singers[session.id] = singers[session.id] || [];
-  let singer = singers[session.id].find((s) => s.deviceId === deviceId);
+  singers[currentSession.id] = singers[currentSession.id] || [];
+  let singer = singers[currentSession.id].find((s) => s.deviceId === deviceId);
   if (!singer) {
     singer = { id: uuidv4(), name, deviceId };
-    singers[session.id].push(singer);
+    singers[currentSession.id].push(singer);
     if (!singerStats[singer.name]) singerStats[singer.name] = { songsSung: 0 };
     let profile = (await loadSingerProfile(deviceId)) || {
       id: deviceId,
@@ -243,14 +326,14 @@ async function joinSession(code, name, deviceId) {
   }
   if (db) {
     db.collection('sessions')
-      .doc(session.id)
+      .doc(currentSession.id)
       .collection('singers')
       .doc(singer.id)
       .set({ name: singer.name, deviceId: singer.deviceId });
   }
   saveSessionState();
   return {
-    sessionId: session.id,
+    sessionId: currentSession.id,
     singerId: singer.id,
     deviceId: singer.deviceId,
   };
@@ -259,7 +342,7 @@ async function joinSession(code, name, deviceId) {
 app.post('/sessions', async (req, res) => {
   try {
     const session = await createSession();
-    const joinLink = `${originBase}/?code=${encodeURIComponent(session.code)}`;
+    const joinLink = `${originBase}/`;
     const qrCode = await QRCode.toDataURL(joinLink);
     res.json({ id: session.id, code: session.code, qrCode });
   } catch (err) {
@@ -277,7 +360,12 @@ async function loadLatestSession() {
       .get();
     if (snap.empty) return null;
     const doc = snap.docs[0];
-    return { id: doc.id, ...doc.data() };
+    const data = doc.data();
+    if (!data.code) {
+      console.error('Loaded session from Firestore is invalid (missing code):', doc.id);
+      return null;
+    }
+    return { id: doc.id, ...data };
   } catch (err) {
     console.error('Failed to load session from Firestore:', err.message);
     return null;
@@ -316,7 +404,7 @@ app.get('/sessions/current', async (req, res) => {
     currentSession = await loadLatestSession();
     if (!currentSession) return res.status(404).json({ error: 'No session' });
   }
-  const joinLink = `${originBase}/?code=${encodeURIComponent(currentSession.code)}`;
+  const joinLink = `${originBase}/`;
   const qrCode = await QRCode.toDataURL(joinLink);
   res.json({
     id: currentSession.id,
@@ -326,11 +414,10 @@ app.get('/sessions/current', async (req, res) => {
   });
 });
 
-app.post('/sessions/:code/join', async (req, res) => {
-  const { code } = req.params;
+app.post('/session/join', async (req, res) => {
   const { name, deviceId } = req.body;
   try {
-    const result = await joinSession(code, name, deviceId);
+    const result = await joinSession(name, deviceId);
     res.json(result);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -586,7 +673,7 @@ const api = express.Router();
 
 api.get('/session', async (req, res) => {
   if (!currentSession) return res.status(404).json({ error: 'No session' });
-  const joinLink = `${originBase}/?code=${encodeURIComponent(currentSession.code)}`;
+  const joinLink = `${originBase}/`;
   const qrCode = await QRCode.toDataURL(joinLink);
   const ordered = getFairQueue(queue, singerStats, inPhase2());
   res.json({
@@ -601,7 +688,7 @@ api.get('/session', async (req, res) => {
 api.post('/sessions', async (req, res) => {
   try {
     const session = await createSession();
-    const joinLink = `${originBase}/?code=${encodeURIComponent(session.code)}`;
+    const joinLink = `${originBase}/`;
     const qrCode = await QRCode.toDataURL(joinLink);
     res.json({ id: session.id, code: session.code, qrCode });
   } catch (err) {
@@ -759,18 +846,47 @@ app.get('/queue', (req, res) => {
   res.json({ paused, queue: ordered });
 });
 
-// Admin UI routes served by the Lit app
-app.get('/admin/:id', (req, res) => {
+// Admin UI routes served by the Lit app (localhost only)
+app.get('/admin/:id', requireLocalhost, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'dist', 'index.html'));
 });
 
-app.get('/admin', (req, res) => {
+app.get('/admin', requireLocalhost, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'dist', 'index.html'));
+});
+
+// Public login route for regular users
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'dist', 'index.html'));
+});
+
+// Get QR code for default room (for printing)
+app.get('/qr/default', async (req, res) => {
+  try {
+    if (!currentSession) {
+      return res.status(404).json({ error: 'No active session' });
+    }
+    
+    const joinLink = `${originBase}/`;
+    const qrCode = await QRCode.toDataURL(joinLink);
+    
+    res.json({ 
+      roomCode: 'DEFAULT',
+      joinLink,
+      qrCode,
+      printInfo: {
+        title: 'Join Karaoke Night',
+        instructions: 'Scan QR code or visit the website to join karaoke'
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Serve the Lit app from the Vite build output for all non-API, non-admin routes
 app.get(
-  /^\/(?!api|auth|sessions|songs|search|preview|queue|phase2|public|dist|assets|admin).*/,
+  /^\/(?!api|auth|sessions|songs|search|preview|queue|phase2|public|dist|assets|admin|qr).*/,
   (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'dist', 'index.html'));
   },

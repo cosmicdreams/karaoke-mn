@@ -3,7 +3,6 @@ import './qr-code-display.js';
 
 export class SessionInfoDisplay extends LitElement {
   static properties = {
-    code: { type: String },
     qrCode: { type: String },
     joinUrl: { type: String },
   };
@@ -33,9 +32,10 @@ export class SessionInfoDisplay extends LitElement {
   render() {
     return html`
       <div>
-        <p>Room Code: ${this.code}</p>
-        <p>Join URL: <a href="${this.joinUrl}" target="_blank" rel="noopener">${this.joinUrl}</a></p>
-        ${this.qrCode ? html`<img src="${this.qrCode}" alt="QR Code" />` : ''}
+        <p>Join: <a href="${this.joinUrl}" target="_blank" rel="noopener">${this.joinUrl}</a></p>
+        ${this.qrCode && this.qrCode.startsWith('data:image')
+          ? html`<img src="${this.qrCode}" alt="QR Code to join karaoke" />`
+          : ''}
       </div>
     `;
   }

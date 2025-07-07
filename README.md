@@ -34,6 +34,11 @@ npm run build
    `FIRESTORE_EMULATOR_HOST` instead of providing credentials.
 5. Set `DRUPAL_CONTENT_URL` to your Drupal JSON:API endpoint for prepared content.
 
+6. To start local Firebase emulators for Firestore and Functions, run:
+   ```bash
+   firebase emulators:start
+   ```
+
 ## YouTube Search Script
 
 A small Node.js script is provided to search YouTube for karaoke videos.

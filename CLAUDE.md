@@ -39,6 +39,19 @@ This is a karaoke application with three main parts:
 2. **Lit Frontend** (`frontend/`) - Modern web components for KJ (host) and guest interfaces
 3. **Firebase Integration** - Production backend for sessions and real-time queue management
 
+### Architectural Decisions
+
+Key architectural decisions are documented in `/docs/adr/`:
+
+- **[ADR-001: Use Passkeys for Authentication](docs/adr/ADR-001-use-passkeys-for-authentication.md)** - WebAuthn passkeys for KJ auth instead of passwords
+- **[ADR-002: Use Drupal for Content Management](docs/adr/ADR-002-use-drupal-for-content-management.md)** - Optional headless Drupal for curated content (app works without it)
+- **[ADR-003: Use Firebase for Real-time Data](docs/adr/ADR-003-use-firebase-for-realtime-data.md)** - Firestore for real-time queue synchronization
+- **[ADR-004: YouTube Launch Strategy](docs/adr/ADR-004-youtube-launch-strategy.md)** - Launch videos in new windows instead of embedding to avoid restrictions
+- **[ADR-005: Lit Web Components](docs/adr/ADR-005-lit-web-components.md)** - Use Lit framework for standards-based, lightweight components
+- **[ADR-006: Dual Environment Strategy](docs/adr/ADR-006-dual-environment-strategy.md)** - Express for development, Firebase for production
+
+**Important**: The app gracefully degrades when optional services (Drupal) are unavailable. Core functionality always works.
+
 ### Key Components
 
 - **Session Management**: Room codes, QR codes, passkey authentication for KJs

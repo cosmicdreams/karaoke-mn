@@ -7,9 +7,7 @@ import './watermark-link.js';
 
 export class MainScreenView extends LitElement {
   static properties = {
-    roomCode: { type: String },
     queue: { state: true },
-    sessionCode: { state: true },
     qrCode: { state: true },
     preparedContent: { state: true },
   };
@@ -17,7 +15,6 @@ export class MainScreenView extends LitElement {
   constructor() {
     super();
     this.queue = [];
-    this.sessionCode = '';
     this.qrCode = '';
     this.preparedContent = null;
   }
@@ -43,18 +40,14 @@ export class MainScreenView extends LitElement {
   }
 
   async _load() {
-    const sessionUrl = this.roomCode
-      ? `/sessions/${encodeURIComponent(this.roomCode)}`
-      : '/sessions/current';
     const [queueRes, sessionRes] = await Promise.all([
       fetch('/queue'),
-      fetch(sessionUrl),
+      fetch('/sessions/current'),
     ]);
     const queueData = await queueRes.json();
     this.queue = queueData.queue || [];
     if (sessionRes.ok) {
       const s = await sessionRes.json();
-      this.sessionCode = s.code;
       this.qrCode = s.qrCode;
       this.preparedContent = s.preparedContent || null;
     }
@@ -87,12 +80,11 @@ export class MainScreenView extends LitElement {
 
   render() {
     const current = this.queue[0];
-    const joinUrl = `${window.location.origin}/?code=${this.sessionCode}`;
+    const joinUrl = window.location.origin;
     return html`
       <div class="video-wrapper">
         <youtube-player .videoId=${current ? current.videoId : ''}></youtube-player>
         <session-info-display
-          .code=${this.sessionCode}
           .qrCode=${this.qrCode}
           .joinUrl=${joinUrl}
         ></session-info-display>
