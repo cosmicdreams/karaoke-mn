@@ -3,11 +3,11 @@ dotenv.config();
 import express from 'express';
 import session from 'express-session';
 import bodyParser from 'body-parser';
-import { google } from 'googleapis';
 import { getFirestore } from './firebase.js';
 import { v4 as uuidv4, validate as uuidValidate } from 'uuid';
 import QRCode from 'qrcode';
 import { parseVideoId } from './src/shared/parseVideoId.js';
+import { getVideoInfo } from './youtube.js';
 import { getFairQueue } from './fairPlay.js';
 import {
   generateRegistration,
@@ -91,12 +91,6 @@ app.post('/auth/login/verify', async (req, res) => {
   }
 });
 
-const apiKey = process.env.YOUTUBE_API_KEY;
-if (!apiKey) {
-  console.error('Missing YOUTUBE_API_KEY environment variable');
-  process.exit(1);
-}
-const youtube = google.youtube({ version: 'v3', auth: apiKey });
 let db;
 
 (async () => {
@@ -150,25 +144,6 @@ async function saveSingerProfile(profile) {
   if (db) {
     await db.collection('singerProfiles').doc(profile.id).set(profile);
   }
-}
-
-async function getVideoInfo(videoId) {
-  const resp = await youtube.videos.list({
-    part: 'snippet,status',
-    id: videoId,
-  });
-  if (!resp.data.items.length) throw new Error('Video not found');
-  const item = resp.data.items[0];
-  if (item.status && item.status.embeddable === false) {
-    throw new Error('Video not embeddable');
-  }
-  const snippet = item.snippet;
-  return {
-    videoId,
-    title: snippet.title,
-    artist: snippet.channelTitle,
-    thumbnail: snippet.thumbnails.default.url,
-  };
 }
 
 function generateRoomCode() {

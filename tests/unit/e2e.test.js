@@ -6,10 +6,17 @@ import request from 'supertest';
 
 let app;
 
+vi.mock('../../youtube.js', () => ({
+  getVideoInfo: vi.fn().mockResolvedValue({
+    videoId: 'ABCDEFGHIJK',
+    title: 'Test Video',
+    artist: 'Test Artist',
+  }),
+}));
+
 describe('end-to-end server', () => {
   beforeEach(async () => {
     vi.resetModules();
-    process.env.YOUTUBE_API_KEY = 'test';
     const mod = await import('../../server.js');
     app = mod.default || mod;
   });
