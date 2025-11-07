@@ -51,11 +51,18 @@ function createDb() {
 let db;
 let app;
 
+vi.mock('../../youtube.js', () => ({
+  getVideoInfo: vi.fn().mockResolvedValue({
+    videoId: 'ABCDEFGHIJK',
+    title: 'Test Video',
+    artist: 'Test Artist',
+  }),
+}));
+
 beforeEach(async () => {
   vi.resetModules();
   db = createDb();
   vi.mock('../../firebase.js', () => ({ getFirestore: () => db }));
-  process.env.YOUTUBE_API_KEY = 'test';
   const mod = await import('../../server.js');
   app = mod.default || mod;
 });
