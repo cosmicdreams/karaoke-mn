@@ -2,7 +2,7 @@
 // @ts-check
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
-  testDir: 'e2e',
+  testDir: 'tests/e2e',
   workers: 1,
   use: {
     baseURL: 'http://localhost:3000/',
